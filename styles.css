@@ -1,0 +1,109 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    line-height: 1.5;
+}
+
+:root {
+    --azul: #0a47a3;
+    --azul-osc: #08367a;
+    --amarillo: #ffcc00;
+    --tinta: #222;
+    --borde: #e5e7eb;
+    --blanco: #fff;
+    --sombra: 0 8px 20px rgba(0, 0, 0, .06);
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--tinta);
+    background: #f6f8fb;
+}
+
+.aside-logo img {
+    max-width: 70%;
+    height: auto;
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+/* Navbar */
+.navbar {
+    background: var(--azul);
+}
+
+.navbar-brand img {
+  height: 80px;
+  width: auto;
+}
+
+.navbar a.nav-link {
+    color: #fff;
+}
+
+.navbar a.nav-link:hover {
+    text-decoration: underline;
+}
+
+/* Hero */
+.hero {
+    background: linear-gradient(180deg, var(--azul), var(--azul-osc));
+    color: #fff;
+    padding: 22px 0 28px;
+}
+
+.hero .lead {
+    opacity: .95;
+}
+
+/* Tarjetas con acento izquierdo (opcional) */
+.card {
+    border-radius: 12px;
+    border: 1px solid var(--borde);
+    box-shadow: var(--sombra);
+}
+
+.card.acento {
+    border-left: 4px solid var(--amarillo);
+}
+
+/* Botones de acción */
+.btn-azul {
+    background: var(--azul);
+    color: #fff;
+}
+
+.btn-azul:hover {
+    background: var(--azul-osc);
+    color: #fff;
+}
+
+.btn-amarillo {
+    background: var(--amarillo);
+    color: #111;
+}
+
+.btn-amarillo:hover {
+    filter: brightness(.95);
+    color: #111;
+}
+
+/* Footer */
+footer {
+    color: #4b5563;
+    padding: 18px 0;
+}
+
+/* Imagen lateral en portada (solo index) */
+.aside-logo {
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+    padding: 16px;
+}
