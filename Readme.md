@@ -29,6 +29,6 @@ El logo utilizado es el oficial del **Club de Leones de Tibás**.
 
 ---
 
-## 📖 Autor
+## Autor
 **Grupo 06**  
 Universidad Fidélitas – 2025
