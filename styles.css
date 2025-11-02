@@ -215,8 +215,6 @@ footer {
   border-color: var(--color-azul);
 }
 
-.btn-primary:hover {}
-
 .welcome-container {
 
   min-height: calc(100vh - 150px);
