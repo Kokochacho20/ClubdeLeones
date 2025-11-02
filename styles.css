@@ -9,9 +9,11 @@ html {
 }
 
 :root {
-    --azul: #0a47a3;
-    --azul-osc: #08367a;
-    --amarillo: #ffcc00;
+    
+    --color-azul: #0a47a3;     
+    --azul-osc: #08367a;       
+    --color-amarillo: #ffcc00; 
+    
     --tinta: #222;
     --borde: #e5e7eb;
     --blanco: #fff;
@@ -23,6 +25,12 @@ body {
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     color: var(--tinta);
     background: #f6f8fb;
+
+    
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    
 }
 
 .aside-logo img {
@@ -32,28 +40,28 @@ body {
     margin: 0 auto 1rem;
 }
 
-/* Navbar */
+
 .navbar {
-    background: var(--azul);
+    background: var(--color-azul); 
 }
 
 .navbar-brand img {
-  height: 80px;
-  width: auto;
+    height: 80px;
+    width: auto;
 }
 
 .navbar a.nav-link {
-    color: #fff;
+    color: var(--blanco);
 }
 
 .navbar a.nav-link:hover {
     text-decoration: underline;
 }
 
-/* Hero */
+
 .hero {
-    background: linear-gradient(180deg, var(--azul), var(--azul-osc));
-    color: #fff;
+    background: linear-gradient(180deg, var(--color-azul), var(--azul-osc)); 
+    color: var(--blanco);
     padding: 22px 0 28px;
 }
 
@@ -61,7 +69,7 @@ body {
     opacity: .95;
 }
 
-/* Tarjetas con acento izquierdo (opcional) */
+
 .card {
     border-radius: 12px;
     border: 1px solid var(--borde);
@@ -69,41 +77,168 @@ body {
 }
 
 .card.acento {
-    border-left: 4px solid var(--amarillo);
+    border-left: 4px solid var(--color-amarillo); 
 }
 
-/* Botones de acción */
+
 .btn-azul {
-    background: var(--azul);
-    color: #fff;
+    background: var(--color-azul); 
+    color: var(--blanco);
 }
 
 .btn-azul:hover {
     background: var(--azul-osc);
-    color: #fff;
+    color: var(--blanco);
 }
 
 .btn-amarillo {
-    background: var(--amarillo);
-    color: #111;
+    background: var(--color-amarillo); 
+    color: var(--tinta);
 }
 
 .btn-amarillo:hover {
     filter: brightness(.95);
-    color: #111;
+    color: var(--tinta);
 }
 
-/* Footer */
+
 footer {
     color: #4b5563;
     padding: 18px 0;
+    
+    margin-top: auto; 
 }
 
-/* Imagen lateral en portada (solo index) */
+
 .aside-logo {
-    background: #fff;
+    background: var(--blanco);
     border: 1px solid var(--borde);
     border-radius: 12px;
     box-shadow: var(--sombra);
     padding: 16px;
 }
+
+
+
+.navbar-socio {
+    background-color: var(--color-azul);
+    padding: 0;
+}
+
+.menu-principal {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex; 
+    height: 100%; 
+}
+
+.menu-principal > li {
+    position: relative; 
+    height: 100%;
+}
+
+.menu-principal a {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: var(--blanco);
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+    white-space: nowrap;
+}
+
+
+.menu-principal > li > a:hover {
+    background-color: var(--color-amarillo);
+    color: var(--color-azul);
+}
+
+
+.submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute; 
+    top: 100%; 
+    left: 0;
+    background-color: var(--azul-osc); 
+    min-width: 280px;
+    z-index: 1000;
+    display: none; 
+}
+
+
+.submenu a {
+    padding: 10px 20px;
+    color: var(--blanco);
+    font-weight: normal;
+}
+
+.submenu a:hover {
+    background-color: var(--color-azul); 
+    color: var(--color-amarillo);
+}
+
+
+.menu-principal > li:hover > .submenu {
+    display: block;
+}
+
+
+.modal-content {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+
+.text-accent {
+    color: var(--color-azul) !important;
+}
+
+
+.btn-primary {
+    background-color: var(--color-azul);
+    border-color: var(--color-azul);
+}
+
+
+.btn-primary:hover {
+    
+}
+
+
+
+
+.welcome-container {
+    
+    min-height: calc(100vh - 150px);
+   
+    position: relative; 
+    
+    background-image: none;
+}
+
+
+.welcome-container::before {
+    content: ""; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    
+    background-image: url('img/logotibas.png'); 
+    background-repeat: no-repeat;
+    background-position: center 80%; 
+    background-size: 300px; 
+    
+    
+    opacity: 0.15;
+    
+    
+    z-index: 1; 
+}
+

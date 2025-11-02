@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mantenimiento de Cantones – Club de Leones de Tibás</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar-socio">
+            <div class="container d-flex align-items-center justify-content-between">
+                <a class="navbar-brand d-flex align-items-center gap-2" href="menu_socio.html">
+                    <img src="img/logotibas.png" alt="Logo" style="width: 30px; height: 30px;">
+                    <span class="text-white">Área de Socios</span>
+                </a>
+                <ul class="menu-principal">
+                    <li><a href="#">Configuración</a><ul class="submenu">
+                        <li><a href="mantenimiento_provincias.html">Provincias</a></li>
+                        <li><a href="mantenimiento_cantones.html">Cantones</a></li>
+                        <li><a href="mantenimiento_distritos.html">Distritos</a></li>
+                        <li><a href="mantenimiento_tipos_actividad.html">Tipos de Actividad</a></li>
+                        <li><a href="mantenimiento_socios.html">Registro de Socios</a></li>
+                        <li><a href="mantenimiento_tipos_pago.html">Tipos de Pago</a></li>
+                    </ul></li>
+                    <li><a href="#">Ingresos/Egresos</a><ul class="submenu">
+                        <li><a href="registro_actividades.html">Registro de Actividades</a></li>
+                        <li><a href="actividades_por_socio.html">Actividades por Socio</a></li>
+                        <li><a href="ingresos_egresos_actividad.html">Ingresos/Egresos por actividad</a></li>
+                    </ul></li>
+                    <li><a href="#">Reportes</a><ul class="submenu">
+                        <li><a href="reporte_socios.html">Reporte de Socios</a></li>
+                        <li><a href="reporte_pagos_cuotas.html">Reporte de Pagos de cuotas por Socio</a></li>
+                        <li><a href="reporte_ingresos_egresos.html">Reporte de Ingresos y egresos por Actividad</a></li>
+                        <li><a href="recibo_pago.html">Recibo de Pago</a></li>
+                    </ul></li>
+                    <li><a href="login.html">Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <h1 class="h3 mb-4">Gestión de Cantones</h1>
+
+        <div class="card mb-5">
+            <div class="card-body">
+                <h5 class="card-title text-accent">Registrar Nuevo Cantón</h5>
+                <form action="#" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="id_provincia" class="form-label">Provincia</label>
+                            <select id="id_provincia" class="form-select" required>
+                                <option value="" selected disabled>Seleccione una Provincia...</option>
+                                
+                                <option value="1">San José</option>
+                                <option value="2">Alajuela</option>
+                                <option value="3">Cartago</option>
+                                <option value="4">Limón</option>
+                                <option value="5">Puntarenas</option>
+                                <option value="6">Guanacaste</option>
+                                <option value="7">Heredia</option>
+                                </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre_canton" class="form-label">Nombre del Cantón</label>
+                            <input type="text" class="form-control" id="nombre_canton" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">

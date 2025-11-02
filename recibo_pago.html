@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Generar Recibo de Pago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        @media print {
+            body { 
+                background-color: white !important; 
+            }
+            .navbar-socio, .hero, .card, .btn, footer {
+                display: none;
+            }
+            .print-area {
+                display: block !important;
+                margin: 0;
+                padding: 0;
+                border: none;
+            }
+            .recibo-contenido {
+                border: 2px solid #000;
+                padding: 20px;
+            }
+        }
+        .print-area {
+            display: none; 
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar-socio">
+            <div class="container d-flex align-items-center justify-content-between">
+                <a class="navbar-brand d-flex align-items-center gap-2" href="menu_socio.html">
+                    <img src="img/logotibas.png" alt="Logo" style="width: 30px; height: 30px;">
+                    <span class="text-white">Área de Socios</span>
+                </a>
+
+                <ul class="menu-principal">
+                    <li><a href="#">Configuración</a>
+                        <ul class="submenu">
+                            <li><a href="mantenimiento_provincias.html">Provincias</a></li>
+                            <li><a href="mantenimiento_cantones.html">Cantones</a></li>
+                            <li><a href="mantenimiento_distritos.html">Distritos</a></li>
+                            <li><a href="mantenimiento_tipos_actividad.html">Tipos de Actividad</a></li>
+                            <li><a href="mantenimiento_socios.html">Registro de Socios</a></li>
+                            <li><a href="mantenimiento_tipos_pago.html">Tipos de Pago</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="#">Ingresos/Egresos</a>
+                        <ul class="submenu">
+                            <li><a href="registro_actividades.html">Registro de Actividades</a></li>
+                            <li><a href="actividades_por_socio.html">Actividades por Socio</a></li>
+                            <li><a href="ingresos_egresos_actividad.html">Ingresos/Egresos por actividad</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="#">Reportes</a>
+                        <ul class="submenu">
+                            <li><a href="reporte_socios.html">Reporte de Socios</a></li>
+                            <li><a href="reporte_pagos_cuotas.html">Reporte de Pagos de cuotas por Socio</a></li>
+                            <li><a href="reporte_ingresos_egresos.html">Reporte de Ingresos y egresos por Actividad</a></li>
+                            <li><a href="recibo_pago.html">Recibo de Pago</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="login.html">Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+        <section class="hero bg-light">
+            <div class="container py-4">
+                <h1 class="h3 text-dark mb-0">Generador de Recibo de Pago</h1>
+            </div>
+        </section>
+    </header>
+
+    <main class="container my-4">
+        <div class="card p-4 shadow-sm">
+            <h2 class="h4 text-accent mb-3">Buscar Transacción para Recibo</h2>
+
+            <form action="#" method="get" id="form-busqueda">
+                <div class="row g-3 align-items-end">
+                    
+                    <div class="col-md-4">
+                        <label for="id_transaccion_recibo" class="form-label">ID de Transacción (Ingreso)</label>
+                        <input type="number" class="form-control" id="id_transaccion_recibo" name="id_transaccion_recibo" required placeholder="Ej. 1, 5, 10...">
+                    </div>
+
+                    <div class="col-md-5">
+                        <label for="id_socio_recibo" class="form-label">Socio</label>
+                        <select class="form-select" id="id_socio_recibo" name="id_socio_recibo">
+                            <option value="">Buscar por ID o Socio</option>
+                            <option value="1">Jean Paul Segura</option>
+                            <option value="2">Franciny Arias</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary w-100" onclick="mostrarRecibo()">Buscar y Previsualizar</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="print-area mt-4 border p-3" id="recibo-area">
+                <div class="recibo-contenido">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                        <img src="img/logotibas.png" alt="Logo Club" style="width: 50px; height: 50px;">
+                        <div class="text-end">
+                            <h5 class="mb-0 text-accent">RECIBO OFICIAL DE PAGO</h5>
+                            <p class="small mb-0">Club de Leones de Tibás</p>
+                        </div>
+                    </div>
+
+                    <div class="row small mb-3">
+                        <div class="col-6">
+                            <p class="mb-1"><strong>Recibo No.:</strong> <span id="recibo-id">00058</span></p>
+                            <p class="mb-1"><strong>Fecha:</strong> <span id="recibo-fecha">01 Noviembre 2025</span></p>
+                        </div>
+                        <div class="col-6 text-end">
+                            <p class="mb-1"><strong>Transacción ID:</strong> <span id="recibo-transaccion-id">45</span></p>
+                            <p class="mb-1"><strong>Tipo Pago:</strong> <span id="recibo-tipo-pago">Transferencia SINPE</span></p>
+                        </div>
+                    </div>
+
+                    <p class="mb-3">
+                        Recibido de: 
+                        <strong class="text-accent fs-6" id="recibo-socio">Jean Paul Segura (Cédula: 1-1234-5678)</strong>
+                    </p>
+
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered table-sm small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th class="text-end">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="recibo-concepto">Pago Cuota Mensual Noviembre 2025</td>
+                                    <td class="text-end fw-bold text-success">₡15,000.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <p class="text-end fs-5 mb-4">
+                        **TOTAL PAGADO: ₡15,000.00**
+                    </p>
+
+                    <div class="row small">
+                        <div class="col-6 text-center border-top pt-2">
+                            <p class="mb-0">Firma Tesorería</p>
+                        </div>
+                        <div class="col-6 text-center border-top pt-2">
+                            <p class="mb-0">Firma del Socio</p>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="text-center mt-3 d-print-none">
+                    <button type="button" class="btn btn-azul" onclick="window.print()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
+                            <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zm1 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-1H5zm6.5 1h-.5a.5.5 0 1 1 0-1h.5a.5.5 0 1 1 0 1"/>
+                        </svg>
+                        Imprimir Recibo
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <footer class="text-center">
+        <div class="container"><small>&copy; Club de Leones de Tibás — 2025</small></div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function mostrarRecibo() {
+            
+            const transaccionId = document.getElementById('id_transaccion_recibo').value;
+            const reciboArea = document.getElementById('recibo-area');
+            
+            if (transaccionId) {
+                
+                document.getElementById('recibo-id').textContent = '000' + transaccionId;
+                document.getElementById('recibo-transaccion-id').textContent = transaccionId;
+                reciboArea.style.display = 'block';
+                
+                alert('Por favor, ingrese un ID de Transacción.');
+                reciboArea.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
