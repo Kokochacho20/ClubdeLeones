@@ -11,14 +11,16 @@
 
 <body>
     <header>
-        <nav class="navbar-socio">
+        <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container d-flex align-items-center justify-content-between">
                 <a class="navbar-brand d-flex align-items-center gap-2" href="menu_socio.html">
-                    <img src="../img/logotibas.png" alt="Logo" style="width: 30px; height: 30px;">
-                    <span class="text-white">Área de Socios</span>
+                    <img src="../img/logotibas.png" alt="Logo Club de Leones de Tibás">
+                    <span>Área de Socios</span>
                 </a>
-                <ul class="menu-principal">
-                    <li><a href="#">Configuración</a>
+
+                <ul class="navbar-nav ms-auto d-flex flex-row gap-3 menu-principal">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Configuración</a>
                         <ul class="submenu">
                             <li><a href="mantenimiento_provincias.html">Provincias</a></li>
                             <li><a href="mantenimiento_cantones.html">Cantones</a></li>
@@ -27,32 +29,42 @@
                             <li><a href="mantenimiento_bancos.html">Bancos</a></li>
                             <li><a href="mantenimiento_socios.html">Registro de Socios</a></li>
                             <li><a href="mantenimiento_tipos_pago.html">Tipos de Pago</a></li>
+                            <li><a href="mantenimiento_transacciones.html">Transacciones</a></li>
                         </ul>
                     </li>
-                    <li><a href="#">Ingresos/Egresos</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Ingresos/Egresos</a>
                         <ul class="submenu">
                             <li><a href="registro_actividades.html">Registro de Actividades</a></li>
                             <li><a href="actividades_por_socio.html">Actividades por Socio</a></li>
-                            <li><a href="ingresos_egresos_actividad.html">Ingresos/Egresos por actividad</a></li>
+                            <li><a href="ingresos_egresos_actividad.html">Ingresos/Egresos por Actividad</a></li>
                         </ul>
                     </li>
-                    <li><a href="#">Reportes</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Reportes</a>
                         <ul class="submenu">
                             <li><a href="reporte_socios.html">Reporte de Socios</a></li>
-                            <li><a href="reporte_pagos_cuotas.html">Reporte de Pagos de cuotas por Socio</a></li>
-                            <li><a href="reporte_ingresos_egresos.html">Reporte de Ingresos y egresos por Actividad</a>
-                            </li>
+                            <li><a href="reporte_pagos_cuotas.html">Pagos de Cuotas por Socio</a></li>
+                            <li><a href="reporte_ingresos_egresos.html">Ingresos y Egresos por Actividad</a></li>
                             <li><a href="recibo_pago.html">Recibo de Pago</a></li>
                         </ul>
                     </li>
-                    <li><a href="login.html">Cerrar Sesión</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Cerrar Sesión</a>
+                    </li>
                 </ul>
             </div>
         </nav>
-    </header>
 
+        <section class="hero">
+            <div class="container">
+                <h1 class="h2 mb-2">Mantenimiento de Provincias</h1>
+                <p class="lead mb-0">Control de provincias</p>
+            </div>
+        </section>
+    </header>
     <main class="container my-5">
-        <h1 class="h3 mb-4">Gestión de Provincias</h1>
+        <h1 class="h4 text-accent mb-3">Gestión de Provincias</h1>
 
         <div class="card mb-5">
             <div class="card-body">
