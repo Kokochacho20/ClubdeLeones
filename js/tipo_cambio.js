@@ -13,13 +13,13 @@ async function cargarTipoCambio() {
     tipos.forEach(tc => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${tc.ID_TIP_CAMBIO}</td>
-        <td>${tc.FEC_TIP_CAMBIO}</td>
-        <td>${tc.TC_COMPRA}</td>
-        <td>${tc.TC_VENTA}</td>
+        <td>${tc.id_tip_cambio}</td>
+        <td>${tc.fec_tip_cambio}</td>
+        <td>${tc.tc_compra}</td>
+        <td>${tc.tc_venta}</td>
         <td>
-          <button class="btn btn-sm btn-amarillo btn-editar" data-id="${tc.ID_TIP_CAMBIO}">Editar</button>
-          <button class="btn btn-sm btn-danger btn-eliminar" data-id="${tc.ID_TIP_CAMBIO}">Eliminar</button>
+          <button class="btn btn-sm btn-amarillo btn-editar" data-id="${tc.id_tip_cambio}">Editar</button>
+          <button class="btn btn-sm btn-danger btn-eliminar" data-id="${tc.id_tip_cambio}">Eliminar</button>
         </td>
       `;
       tbodyTipoCambio.appendChild(tr);
@@ -34,7 +34,7 @@ async function cargarTipoCambio() {
 // CRUD crear tipo de cambio
 async function crearTipoCambio(e) {
   e.preventDefault();
-  const fec_tip_cambio = document.getElementById('fec_tip_cambio').value.trim();
+  const fec_tip_cambio = document.getElementById('fec_tip_cambio').value;
   const tc_compra = document.getElementById('tc_compra').value.trim();
   const tc_venta = document.getElementById('tc_venta').value.trim();
 
@@ -79,7 +79,6 @@ function asignarEventosAcciones() {
       if (!confirm('¿Desea eliminar este tipo de cambio?')) return;
 
       const payload = { accion: 'eliminar', id_tip_cambio: id };
-
       try {
         const res = await fetch(`${API_BASE}/tipocambio.php`, {
           method: 'POST',
