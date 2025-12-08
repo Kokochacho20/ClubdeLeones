@@ -18,16 +18,19 @@
           <img src="../img/logotibas.png" alt="Logo Club de Leones de Tibás">
           <span>Área de Socios</span>
         </a>
-
         <ul class="navbar-nav ms-auto d-flex flex-row gap-3 menu-principal">
           <li class="nav-item">
             <a class="nav-link" href="#">Configuración</a>
+
+
             <ul class="submenu">
               <li><a href="mantenimiento_provincias.html">Provincias</a></li>
               <li><a href="mantenimiento_cantones.html">Cantones</a></li>
               <li><a href="mantenimiento_distritos.html">Distritos</a></li>
               <li><a href="mantenimiento_tipos_actividad.html">Tipos de Actividad</a></li>
               <li><a href="mantenimiento_socios.html">Registro de Socios</a></li>
+              <li><a href="mantenimiento_bancos.html">Bancos</a></li>
+              <li><a href="cuentas_bancarias.html">Cuentas Bancarias</a></li>
               <li><a href="mantenimiento_tipos_pago.html">Tipos de Pago</a></li>
             </ul>
           </li>
@@ -35,9 +38,10 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Ingresos/Egresos</a>
             <ul class="submenu">
+              <li><a href="ingresos_egresos_actividad.html">Ingresos/Egresos por Actividad</a></li>
               <li><a href="registro_actividades.html">Registro de Actividades</a></li>
               <li><a href="actividades_por_socio.html">Actividades por Socio</a></li>
-              <li><a href="ingresos_egresos_actividad.html">Ingresos/Egresos por Actividad</a></li>
+              <li><a href="transacciones_cuentas.html">Transacciones por Cuenta</a></li>
             </ul>
           </li>
 
@@ -50,6 +54,7 @@
               <li><a href="recibo_pago.html">Recibo de Pago</a></li>
             </ul>
           </li>
+
 
           <li class="nav-item">
             <a class="nav-link" href="login.html">Cerrar Sesión</a>
@@ -72,6 +77,7 @@
 
       <form action="#" method="get">
         <div class="row g-3">
+
           <div class="col-md-5">
             <label for="id_socio_filtro" class="form-label">Socio</label>
             <select class="form-select" id="id_socio_filtro" name="id_socio_filtro" required>
@@ -90,6 +96,7 @@
             <label for="fecha_hasta" class="form-label">Período (Hasta)</label>
             <input type="date" class="form-control" id="fecha_hasta" name="fecha_hasta" required>
           </div>
+
         </div>
 
         <div class="d-flex gap-2 mt-4">
@@ -102,7 +109,7 @@
 
       <h3 class="h5">Historial de Pagos de Cuotas</h3>
       <div class="alert alert-info">
-        Mostrando pagos de cuotas para <strong>Jean Paul Segura</strong> entre 2024-01-01 y 2024-12-31.
+        Mostrando pagos de cuotas para **Jean Paul Segura** entre 2024-01-01 y 2024-12-31.
       </div>
 
       <div class="table-responsive">

@@ -1,9 +1,55 @@
 const API_BASE = '../api';
 
-const codProvinciaInput = document.getElementById('cod_provincia');
 const formProvincia = document.getElementById('form-provincia');
+const codProvinciaInput = document.getElementById('cod_provincia');
+const nombreProvinciaInput = document.getElementById('nombre_provincia');
 const tbodyProvincias = document.getElementById('tbody-provincias');
+const botonGuardar = formProvincia.querySelector("button[type='submit']");
 
+formProvincia.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const nombre_provincia = nombreProvinciaInput.value.trim();
+    const cod_provincia = codProvinciaInput.value.trim(); // hidden
+
+    if (!nombre_provincia) {
+        alert('Complete el nombre de la provincia');
+        return;
+    }
+
+    const payload = cod_provincia
+        ? {
+            accion: 'actualizar',
+            cod_provincia,
+            nombre_provincia
+        }
+        : {
+            accion: 'crear',
+            nombre_provincia
+        };
+
+    try {
+        const res = await fetch(`${API_BASE}/provincias.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const respuesta = await res.json();
+
+        if (!res.ok || respuesta.ok === false) {
+            throw new Error(respuesta.mensaje || 'Error al guardar provincia');
+        }
+        alert(respuesta.mensaje || (cod_provincia ? 'Provincia actualizada' : 'Provincia creada'));
+        codProvinciaInput.value = '';
+        nombreProvinciaInput.value = '';
+        botonGuardar.textContent = 'Guardar';
+
+        cargarProvincias();
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
+    }
+});
 
 // cargar las provincias  
 async function cargarProvincias() {
@@ -42,17 +88,16 @@ async function cargarProvincias() {
 //CRUD crear provincia
 async function crearProvincia(e) {
     e.preventDefault();
-    const cod_provincia = codProvinciaInput.value;
+
     const nombre_provincia = document.getElementById('nombre_provincia').value.trim();
 
-    if (!cod_provincia || !nombre_provincia) {
-        alert('Complete todos los campos');
+    if (!nombre_provincia) {
+        alert('Complete el nombre de la provincia');
         return;
     }
 
     const payload = {
         accion: 'crear',
-        cod_provincia,
         nombre_provincia
     };
 
@@ -70,7 +115,6 @@ async function crearProvincia(e) {
 
         alert(respuesta.mensaje || 'Provincia creada correctamente');
         formProvincia.reset();
-
         cargarProvincias();
     } catch (err) {
         console.error(err);
@@ -78,15 +122,31 @@ async function crearProvincia(e) {
     }
 }
 
-formProvincia.addEventListener('submit', crearProvincia);
 
-//CRUD delete provincia
 function asignarEventosAcciones() {
+    //crud EDITAR
+    const botonesEditar = document.querySelectorAll('.btn-editar');
+    botonesEditar.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            const fila = btn.closest('tr');
+            const nombre = fila.children[1].textContent.trim();
+
+            // ponemos el formulario en modo edición
+            codProvinciaInput.value = id;
+            nombreProvinciaInput.value = nombre;
+            botonGuardar.textContent = 'Actualizar';
+        });
+    });
+
+    //crud eliminar
     const botonesEliminar = document.querySelectorAll('.btn-eliminar');
     botonesEliminar.forEach(btn => {
         btn.addEventListener('click', async () => {
             const id = btn.getAttribute('data-id');
-            if (!confirm('¿Desea eliminar esta povincia?')) return;
+
+            if (!confirm('¿Desea eliminar esta provincia?')) return;
+
             const payload = {
                 accion: 'eliminar',
                 cod_provincia: id
@@ -113,9 +173,8 @@ function asignarEventosAcciones() {
             }
         });
     });
-
-
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     cargarProvincias();

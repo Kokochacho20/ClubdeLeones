@@ -20,10 +20,11 @@ if ($method === 'GET') {
     $stid = oci_parse($conn, $sql);
     oci_execute($stid);
 
-    $distritos = [];
+    $provincias = [];
     while ($row = oci_fetch_assoc($stid)) {
         $provincias[] = $row;
     }
+    error_log('Provincias obtenidas: ' . print_r($provincias, true));
 
     echo json_encode($provincias);
     exit;
@@ -39,13 +40,17 @@ if ($method === 'POST') {
 
     //insertar provincia
     if ($accion === 'crear') {
-        $sql = "BEGIN insertar_provincia(:p_cod_provincia,
-                                        :p_nombre); 
-                END;";
+
+        if (!$nombre) {
+            http_response_code(400);
+            echo json_encode(["ok" => false, "mensaje" => "Falta el nombre de la provincia"]);
+            exit;
+        }
+
+        $sql = "BEGIN insertar_provincia(:p_nombre_provincia); END;";
 
         $stid = oci_parse($conn, $sql);
-        oci_bind_by_name($stid, ":p_cod_provincia", $cod_provincia);
-        oci_bind_by_name($stid, ":p_nombre", $nombre);
+        oci_bind_by_name($stid, ":p_nombre_provincia", $nombre);
 
         if (!oci_execute($stid)) {
             $e = oci_error($stid);
@@ -63,7 +68,7 @@ if ($method === 'POST') {
         if (!$cod_provincia) {
             http_response_code(400);
             echo json_encode(["ok" => false, "mensaje" => "Falta el código de la provincia para actualizar"]);
-            exit;a
+            exit;
         }
 
         $sql = "BEGIN actualizar_provincia(:p_cod_provincia,

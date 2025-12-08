@@ -1,12 +1,12 @@
-const API_BASE = '../api'; // se tiene que ajustar la ruta según tu estructura real
+const API_BASE = '../api';
 
 const provinciaSelect = document.getElementById('id_provincia');
 const cantonSelect = document.getElementById('id_canton');
 const formDistrito = document.getElementById('form-distrito');
 const tbodyDistritos = document.getElementById('tbody-distritos');
 
-// ========== PROVINCIAS ==========
 
+// cargar las provincias para que distritos funcione 
 async function cargarProvincias() {
     try {
         const res = await fetch(`${API_BASE}/provincias.php`);
@@ -17,7 +17,6 @@ async function cargarProvincias() {
         provinciaSelect.innerHTML = '<option value="" selected disabled>Seleccione...</option>';
 
         provincias.forEach(p => {
-            // Esperado: p.COD_PROVINCIA, p.NOMBRE_PROVINCIA
             const opt = document.createElement('option');
             opt.value = p.COD_PROVINCIA;
             opt.textContent = p.NOMBRE_PROVINCIA;
@@ -29,8 +28,7 @@ async function cargarProvincias() {
     }
 }
 
-// ========== CANTONES ==========
-
+//cargar los cantones para que distritos funcione 
 async function cargarCantones(codProvincia) {
     if (!codProvincia) return;
 
@@ -40,62 +38,60 @@ async function cargarCantones(codProvincia) {
     try {
         const res = await fetch(`${API_BASE}/cantones.php?provincia=${encodeURIComponent(codProvincia)}`);
         if (!res.ok) throw new Error('Error al cargar cantones');
-
         const cantones = await res.json();
-
         cantonSelect.innerHTML = '<option value="" selected disabled>Seleccione...</option>';
 
+
         cantones.forEach(c => {
-            // Esperado: c.COD_CANTON, c.NOMBRE_CANTON
             const opt = document.createElement('option');
-            opt.value = c.COD_CANTON;
-            opt.textContent = c.NOMBRE_CANTON;
+            opt.value = c.cod_canton;          // minúsculas
+            opt.textContent = c.nombre_canton; // minúsculas
             cantonSelect.appendChild(opt);
         });
+
 
         cantonSelect.disabled = false;
     } catch (err) {
         console.error(err);
-        cantonSelect.innerHTML = '<option value="" selected disabled>Error al cargar</option>';
-        alert('No se pudieron cargar los cantones');
+        cantonSelect.innerHTML = '<option value="" selected disabled>error al cargar</option>';
+        alert('No se pudieron cargar loscantones');
     }
 }
-
 provinciaSelect.addEventListener('change', () => {
     const codProvincia = provinciaSelect.value;
     cargarCantones(codProvincia);
 });
 
-// ========== DISTRITOS: LISTAR ==========
-
+// listado distritos 
 async function cargarDistritos() {
     try {
         const res = await fetch(`${API_BASE}/distritos.php`);
         if (!res.ok) throw new Error('Error al cargar distritos');
-
         const distritos = await res.json();
-
         tbodyDistritos.innerHTML = '';
 
         distritos.forEach(d => {
-            // Esperado: d.COD_DISTRITO, d.NOMBRE_DISTRITO, d.NOMBRE_CANTON, d.COD_POSTAL
             const tr = document.createElement('tr');
-
             tr.innerHTML = `
-                <td>${d.COD_DISTRITO}</td>
-                <td>${d.NOMBRE_CANTON}</td>
-                <td>${d.NOMBRE_DISTRITO}</td>
-                <td>${d.COD_POSTAL ?? ''}</td>
-                <td>
-                    <button class="btn btn-sm btn-amarillo btn-editar" data-id="${d.COD_DISTRITO}">Editar</button>
-                    <button class="btn btn-sm btn-danger btn-eliminar" data-id="${d.COD_DISTRITO}">Eliminar</button>
-                </td>
-            `;
+        <td>${d.COD_DISTRITO}</td>
+        <td>${d.NOMBRE_CANTON || ''}</td>
+        <td>${d.NOMBRE_DISTRITO}</td>
+        <td>
+            <button 
+                class="btn btn-sm btn-amarillo btn-editar"
+                data-id="${d.COD_DISTRITO}"
+                data-provincia="${d.COD_PROVINCIA}"
+                data-canton="${d.COD_CANTON}"
+                data-nombre="${d.NOMBRE_DISTRITO}"
+            >Editar</button>
+            <button class="btn btn-sm btn-danger btn-eliminar" data-id="${d.COD_DISTRITO}">Eliminar</button>
+        </td>
+    `;
 
             tbodyDistritos.appendChild(tr);
         });
 
-        // asignar eventos de eliminar (editar lo puedes completar luego)
+
         asignarEventosAcciones();
     } catch (err) {
         console.error(err);
@@ -103,11 +99,11 @@ async function cargarDistritos() {
     }
 }
 
-// ========== DISTRITOS: CREAR ==========
-
+//CRUD crear distrito
 async function crearDistrito(e) {
     e.preventDefault();
 
+    const cod_distrito = document.getElementById('cod_distrito').value;
     const cod_provincia = provinciaSelect.value;
     const cod_canton = cantonSelect.value;
     const nombre_distrito = document.getElementById('nombre_distrito').value.trim();
@@ -117,12 +113,19 @@ async function crearDistrito(e) {
         return;
     }
 
+    // decidir acción según si estamos editando o creando
+    const accion = cod_distrito ? 'actualizar' : 'crear';
+
     const payload = {
-        accion: 'crear',
+        accion,
         cod_provincia,
         cod_canton,
         nombre_distrito
     };
+
+    if (cod_distrito) {
+        payload.cod_distrito = cod_distrito;
+    }
 
     try {
         const res = await fetch(`${API_BASE}/distritos.php`, {
@@ -132,16 +135,23 @@ async function crearDistrito(e) {
         });
 
         const respuesta = await res.json();
-
         if (!res.ok || respuesta.ok === false) {
-            throw new Error(respuesta.mensaje || 'Error al crear distrito');
+            throw new Error(respuesta.mensaje || 'Error al guardar distrito');
         }
 
-        alert(respuesta.mensaje || 'Distrito creado correctamente');
+        alert(
+            respuesta.mensaje ||
+            (cod_distrito ? 'Distrito actualizado correctamente' : 'Distrito creado correctamente')
+        );
 
         formDistrito.reset();
+        document.getElementById('cod_distrito').value = '';
         cantonSelect.disabled = true;
         cantonSelect.innerHTML = '<option value="" selected>Seleccione una Provincia primero</option>';
+
+        // devolver botón a "Guardar"
+        const botonGuardar = formDistrito.querySelector("button[type='submit']");
+        if (botonGuardar) botonGuardar.textContent = 'Guardar';
 
         cargarDistritos();
     } catch (err) {
@@ -150,13 +160,40 @@ async function crearDistrito(e) {
     }
 }
 
+
 formDistrito.addEventListener('submit', crearDistrito);
 
-// ========== DISTRITOS: ELIMINAR (básico) ==========
-
+//editar 
 function asignarEventosAcciones() {
-    const botonesEliminar = document.querySelectorAll('.btn-eliminar');
+    // EDITAR
+    const botonesEditar = document.querySelectorAll('.btn-editar');
+    botonesEditar.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            const codProvincia = btn.getAttribute('data-provincia');
+            const codCanton = btn.getAttribute('data-canton');
+            const nombre = btn.getAttribute('data-nombre');
 
+            // poner valores en el formulario
+            document.getElementById('cod_distrito').value = id;
+            provinciaSelect.value = codProvincia;
+            document.getElementById('nombre_distrito').value = nombre;
+
+            // cargar cantones de esa provincia y seleccionar el correcto
+            await cargarCantones(codProvincia);
+            cantonSelect.value = codCanton;
+
+            // cambiar texto del botón
+            const botonGuardar = formDistrito.querySelector("button[type='submit']");
+            if (botonGuardar) botonGuardar.textContent = 'Actualizar';
+
+            // hacer scroll al formulario
+            formDistrito.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // ELIMINAR
+    const botonesEliminar = document.querySelectorAll('.btn-eliminar');
     botonesEliminar.forEach(btn => {
         btn.addEventListener('click', async () => {
             const id = btn.getAttribute('data-id');
@@ -188,11 +225,7 @@ function asignarEventosAcciones() {
             }
         });
     });
-
-    // Aquí podrías agregar eventos para .btn-editar si quieres modo edición
 }
-
-// ========== INICIALIZACIÓN ==========
 
 document.addEventListener('DOMContentLoaded', () => {
     cargarProvincias();
