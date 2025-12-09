@@ -217,3 +217,25 @@ CREATE TABLE TRANSAC_CTA (
 --moneda_transac_cta (C=Colones, D=Dólares) 
 --tipo_transac_cta (D=Depósito, R=Retiro, C=Cheque, T=Transferencia) 
 --conciliada (S=Sí N=No)
+
+
+
+CREATE TABLE USUARIOS (
+    id_usuario        NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre_usuario    VARCHAR2(100)      NOT NULL,
+    correo_usuario    VARCHAR2(150)      UNIQUE NOT NULL,
+    clave_usuario     VARCHAR2(200)      NOT NULL,
+    telefono_usuario  VARCHAR2(20),
+    rol_usuario       VARCHAR2(20)       DEFAULT 'SOCIO' NOT NULL,
+    estado_usuario    VARCHAR2(1)        DEFAULT 'A' NOT NULL,
+    fecha_registro    DATE               DEFAULT SYSDATE NOT NULL,
+
+    CONSTRAINT chk_estado_usuario CHECK (
+        estado_usuario IN ('A','I')
+    ),
+    CONSTRAINT chk_rol_usuario CHECK (
+        rol_usuario IN ('ADMIN','PRESIDENTE','SOCIO','TESORERO','SECRETARIO')
+    )
+) TABLESPACE TBS_LEONES;
+
+commit;

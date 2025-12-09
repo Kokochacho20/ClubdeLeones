@@ -294,3 +294,20 @@ INSERT INTO TRANSAC_CTA VALUES (DEFAULT, 'D', 4, 1, 'D', 0.00, 500.00, 2, DATE '
 
 INSERT INTO TRANSAC_CTA VALUES (DEFAULT, 'D', 5, 2, 'D', 0.00, 600.00, 2, DATE '2026-01-25', 'N', NULL);
 
+
+INSERT INTO USUARIOS (
+    nombre_usuario,
+    correo_usuario,
+    clave_usuario,
+    telefono_usuario,
+    rol_usuario,
+    estado_usuario
+) VALUES (
+    'Administrador General',
+    'admin@leones.com',
+    '$2y$10$vMsTluhuvlzRSU5873SSNucl3BWrkKuBgDvtsU8DeNPhAhRH6W0Lm',
+    '00000000',
+    'ADMIN',
+    'A'
+);
+COMMIT;

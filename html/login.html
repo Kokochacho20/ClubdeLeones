@@ -12,14 +12,13 @@
 
 <body>
 
-  <div class="modal fade show d-block" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel"
-       aria-modal="true" role="dialog">
+  <div class="modal fade show d-block" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-modal="true"
+    role="dialog">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content p-4 border-0 shadow-lg rounded-4">
         <div class="modal-header border-0 flex-column align-items-center">
           <img src="../img/logotibas.png" alt="Logo Club de Leones de Tibás" class="mb-3"
-               style="width:80px;height:80px;border-radius:12px;object-fit:contain"
-               onerror="this.style.display='none'">
+            style="width:80px;height:80px;border-radius:12px;object-fit:contain" onerror="this.style.display='none'">
           <h5 class="modal-title fw-bold text-accent" id="loginModalLabel">Club de Leones Tibás</h5>
           <p class="text-muted mb-0">Acceso al sistema interno</p>
         </div>
@@ -27,11 +26,11 @@
         <div class="modal-body">
           <form id="loginForm" action="#" method="post" novalidate>
             <div class="mb-3">
-              <label for="username" class="form-label">Usuario o correo</label>
+              <label for="username" class="form-label">Correo</label>
               <input type="text" class="form-control" id="username" name="username"
-                     placeholder="Ingrese su usuario" required>
+                placeholder="Ingrese su correo" required>
               <div class="invalid-feedback">
-                Por favor ingrese su usuario o correo.
+                Por favor ingrese su correo.
               </div>
             </div>
 
@@ -39,9 +38,8 @@
               <label for="password" class="form-label">Contraseña</label>
               <div class="input-group">
                 <input type="password" class="form-control" id="password" name="password"
-                       placeholder="Ingrese su contraseña" required>
-                <button class="btn btn-outline-secondary" type="button" id="togglePassword"
-                        title="Mostrar contraseña">
+                  placeholder="Ingrese su contraseña" required>
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar contraseña">
                   👁️
                 </button>
                 <div class="invalid-feedback">
@@ -61,77 +59,58 @@
           </form>
 
           <div class="mt-3 text-center">
-            <a href="#" class="small text-decoration-none">¿Olvidaste tu contraseña?</a>
+            <a href="#" id="forgotPasswordLink" class="small text-decoration-none">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+
+          <div class="mt-2 text-center">
+            <a href="registro_usuario.html" class="small text-decoration-none">
+              ¿No tienes cuenta? Crear usuario
+            </a>
           </div>
 
           <div class="mt-3 text-center">
             <a href="index.html" class="small text-decoration-none">Volver al inicio</a>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 
+  <!--Restablecer contraseña -->
+  <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header">
+          <h5 class="modal-title">Restablecer contraseña</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="resetPasswordForm" novalidate>
+            <div class="mb-3">
+              <label for="resetEmail" class="form-label">Correo registrado</label>
+              <input type="email" class="form-control" id="resetEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="resetPass1" class="form-label">Nueva contraseña</label>
+              <input type="password" class="form-control" id="resetPass1" required>
+            </div>
+            <div class="mb-3">
+              <label for="resetPass2" class="form-label">Confirmar contraseña</label>
+              <input type="password" class="form-control" id="resetPass2" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Guardar nueva contraseña</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    const API_LOGIN = '../api/login.php';
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('loginForm');
-      const toggle = document.getElementById('togglePassword');
-      const pwd = document.getElementById('password');
-      const user = document.getElementById('username');
-
-      if (!form || !pwd || !toggle || !user) {
-        return;
-      }
-
-      toggle.addEventListener('click', () => {
-        if (pwd.type === 'password') {
-          pwd.type = 'text';
-          toggle.textContent = '🙈';
-          toggle.title = 'Ocultar contraseña';
-        } else {
-          pwd.type = 'password';
-          toggle.textContent = '👁️';
-          toggle.title = 'Mostrar contraseña';
-        }
-      });
-
-      form.addEventListener('submit', async ev => {
-        ev.preventDefault();
-
-        const usuario = user.value.trim();
-        const password = pwd.value.trim();
-
-        if (!usuario || !password) {
-          form.classList.add('was-validated');
-          return;
-        }
-
-        try {
-          const res = await fetch(API_LOGIN, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ usuario, password })
-          });
-
-          const data = await res.json();
-
-          if (data.ok) {
-            sessionStorage.setItem('usuario', data.usuario);
-            window.location.href = 'menu_socio.html';
-          } else {
-            alert(data.mensaje || 'Usuario o contraseña incorrectos');
-          }
-        } catch (err) {
-          alert('No se pudo validar el usuario en este momento');
-        }
-      });
-    });
-  </script>
+  <script src="../js/login.js"></script>
 </body>
 
 </html>

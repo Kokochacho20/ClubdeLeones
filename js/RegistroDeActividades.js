@@ -1,9 +1,127 @@
-const API_ACTIVIDADES = "../api/RegistroDeActividades.php";
+const API_ACTIVIDADES     = "../api/RegistroDeActividades.php";
+const API_TIPOS_ACTIVIDAD = "../api/tipo_actividad.php";
+const API_SOCIOS          = "../api/socios.php";
+
+async function cargarTiposActividad() {
+    const select = document.getElementById("id_tipo_actividad");
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Seleccione...</option>';
+
+    try {
+        const res = await fetch(API_TIPOS_ACTIVIDAD);
+        const raw = await res.text();
+        console.log("tipo_actividad.php RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON de tipo_actividad:", e);
+            return;
+        }
+
+        if (data && Array.isArray(data.data)) {
+            data = data.data;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            console.warn("Sin tipos de actividad o formato inesperado:", data);
+            return;
+        }
+
+        data.forEach(t => {
+            const id =
+                t.ID_TIP_ACTIVIDAD   || t.id_tip_actividad   ||
+                t.ID_TIPO_ACTIVIDAD  || t.id_tipo_actividad;
+
+            const nombre =
+                t.NOMBRE_TIP_ACTIVIDAD   || t.nombre_tip_actividad ||
+                t.NOMBRE_TIPO_ACTIVIDAD  || t.nombre_tipo_actividad;
+
+            if (!id || !nombre) {
+                console.warn("Registro tipo_actividad sin campos esperados:", t);
+                return;
+            }
+
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = nombre;
+            select.appendChild(opt);
+        });
+
+    } catch (err) {
+        console.error("Error cargando tipos de actividad:", err);
+    }
+}
+
+async function cargarSocios() {
+    const select = document.getElementById("id_socio_responsable");
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Seleccione un socio...</option>';
+
+    try {
+        const res = await fetch(API_SOCIOS);
+        const raw = await res.text();
+        console.log("socios.php RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON de socios:", e);
+            return;
+        }
+        if (data && Array.isArray(data.data)) {
+            data = data.data;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            console.warn("Sin socios o formato inesperado:", data);
+            return;
+        }
+
+        data.forEach(s => {
+            const id =
+                s.ID_SOCIO || s.id_socio;
+
+            const nombre =
+                s.NOMBRE_SOCIO || s.nombre_socio;
+
+            if (!id || !nombre) {
+                console.warn("Registro socio sin campos esperados:", s);
+                return;
+            }
+
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = nombre;
+            select.appendChild(opt);
+        });
+
+    } catch (err) {
+        console.error("Error cargando socios:", err);
+    }
+}
 
 async function cargarActividades() {
     try {
         const res = await fetch(API_ACTIVIDADES);
-        const data = await res.json();
+        const raw = await res.text();
+        console.log("RegistroDeActividades.php RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON de actividades:", e);
+            data = [];
+        }
+
+        if (data && Array.isArray(data.data)) {
+            data = data.data;
+        }
 
         const tabla = document.getElementById("tablaActividades");
         if (!tabla) return;
@@ -20,17 +138,24 @@ async function cargarActividades() {
         }
 
         data.forEach(a => {
+            const id      = a.ID_ACTIVIDAD      || a.id_actividad;
+            const nombre  = a.NOMBRE_ACTIVIDAD  || a.nombre_actividad;
+            const tipo    = a.ID_TIPO_ACTIVIDAD || a.id_tipo_actividad;
+            const fecha   = a.FEC_ACTIVIDAD     || a.fec_actividad;
+            const socio   = a.ID_SOCIO_RESP     || a.id_socio_resp;
+            const objetivo= a.OBJETIVO_ACTIVIDAD || a.OBJETIVO || a.objetivo_actividad;
+
             tabla.innerHTML += `
                 <tr>
-                    <td>${a.ID_ACTIVIDAD}</td>
-                    <td>${a.NOMBRE_ACTIVIDAD}</td>
-                    <td>${a.ID_TIPO_ACTIVIDAD}</td>
-                    <td>${a.FEC_ACTIVIDAD}</td>
-                    <td>${a.ID_SOCIO_RESP}</td>
-                    <td>${a.OBJETIVO}</td>
+                    <td>${id ?? ""}</td>
+                    <td>${nombre ?? ""}</td>
+                    <td>${tipo ?? ""}</td>
+                    <td>${fecha ?? ""}</td>
+                    <td>${socio ?? ""}</td>
+                    <td>${objetivo ?? ""}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="editarActividad(${a.ID_ACTIVIDAD})">Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="eliminarActividad(${a.ID_ACTIVIDAD})">Eliminar</button>
+                        <button class="btn btn-warning btn-sm" onclick="editarActividad(${id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarActividad(${id})">Eliminar</button>
                     </td>
                 </tr>
             `;
@@ -78,10 +203,23 @@ async function registrarActividad() {
 async function editarActividad(id) {
     try {
         const res = await fetch(API_ACTIVIDADES);
-        const actividades = await res.json();
+        const raw = await res.text();
+
+        let actividades;
+        try {
+            actividades = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON al editar actividad:", e);
+            alert("No se pudo cargar la actividad seleccionada");
+            return;
+        }
+
+        if (actividades && Array.isArray(actividades.data)) {
+            actividades = actividades.data;
+        }
 
         const a = Array.isArray(actividades)
-            ? actividades.find(x => x.ID_ACTIVIDAD == id)
+            ? actividades.find(x => (x.ID_ACTIVIDAD || x.id_actividad) == id)
             : null;
 
         if (!a) {
@@ -89,12 +227,12 @@ async function editarActividad(id) {
             return;
         }
 
-        document.getElementById("id_actividad").value = a.ID_ACTIVIDAD;
-        document.getElementById("nombre_actividad").value = a.NOMBRE_ACTIVIDAD;
-        document.getElementById("id_tipo_actividad").value = a.ID_TIPO_ACTIVIDAD;
-        document.getElementById("fec_actividad").value = a.FEC_ACTIVIDAD;
-        document.getElementById("id_socio_responsable").value = a.ID_SOCIO_RESP;
-        document.getElementById("objetivo_actividad").value = a.OBJETIVO;
+        document.getElementById("id_actividad").value        = a.ID_ACTIVIDAD     || a.id_actividad;
+        document.getElementById("nombre_actividad").value     = a.NOMBRE_ACTIVIDAD || a.nombre_actividad || "";
+        document.getElementById("id_tipo_actividad").value    = a.ID_TIPO_ACTIVIDAD|| a.id_tipo_actividad || "";
+        document.getElementById("fec_actividad").value        = (a.FEC_ACTIVIDAD   || a.fec_actividad || "").substring(0,10);
+        document.getElementById("id_socio_responsable").value = a.ID_SOCIO_RESP    || a.id_socio_resp || "";
+        document.getElementById("objetivo_actividad").value   = a.OBJETIVO_ACTIVIDAD || a.OBJETIVO || a.objetivo_actividad || "";
 
     } catch (error) {
         console.error("Error cargando actividad:", error);
@@ -155,11 +293,11 @@ async function eliminarActividad(id) {
 
 function obtenerDatosFormulario() {
     return {
-        id_actividad: document.getElementById("id_actividad").value,
-        nombre_actividad: document.getElementById("nombre_actividad").value.trim(),
-        id_tipo_actividad: document.getElementById("id_tipo_actividad").value,
-        fec_actividad: document.getElementById("fec_actividad").value,
-        id_socio_resp: document.getElementById("id_socio_responsable").value,
+        id_actividad:       document.getElementById("id_actividad").value,
+        nombre_actividad:   document.getElementById("nombre_actividad").value.trim(),
+        id_tipo_actividad:  document.getElementById("id_tipo_actividad").value,
+        fec_actividad:      document.getElementById("fec_actividad").value,
+        id_socio_resp:      document.getElementById("id_socio_responsable").value,
         objetivo_actividad: document.getElementById("objetivo_actividad").value.trim()
     };
 }
@@ -171,4 +309,8 @@ function limpiarFormulario() {
     if (id) id.value = "";
 }
 
-document.addEventListener("DOMContentLoaded", cargarActividades);
+document.addEventListener("DOMContentLoaded", () => {
+    cargarTiposActividad();
+    cargarSocios();
+    cargarActividades();
+});

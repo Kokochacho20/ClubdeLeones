@@ -13,7 +13,6 @@
 
 <body>
 
-  <!-- ========= HEADER IGUAL A menu_socio ========= -->
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container d-flex align-items-center justify-content-between">
@@ -58,7 +57,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="login.html">Cerrar Sesión</a>
+            <a class="nav-link" href="login.html" id="cerrarSesionBtn">Cerrar Sesión</a>
           </li>
         </ul>
       </div>
@@ -66,14 +65,12 @@
 
     <section class="hero">
       <div class="container">
-        <h1 class="h2 mb-2 text-white">(Nombre de socio)</h1>
+        <h1 class="h2 mb-2 text-white" id="nombreUsuario">(Nombre de socio)</h1>
         <p class="lead mb-0 text-white">Bienvenido</p>
       </div>
     </section>
   </header>
-  <!-- ========= FIN HEADER ========= -->
 
-  <!-- ========= CONTENIDO PROPIO DE LA PÁGINA ========= -->
   <main class="container py-5">
     <h2 class="mb-4">Consulta de actividades por socio</h2>
 
@@ -145,9 +142,7 @@
       </div>
     </div>
   </main>
-  <!-- ========= FIN CONTENIDO ========= -->
 
-  <!-- ========= FOOTER IGUAL AL MENÚ SOCIO ========= -->
   <footer class="text-center mt-auto">
     <div class="container">
       <small>&copy; Club de Leones de Tibás — 2025</small>
@@ -155,6 +150,30 @@
   </footer>
 
   <script src="../js/actividades_socio.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const usuario = sessionStorage.getItem("usuario");
+
+      if (!usuario) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const visibleName = usuario === "admin" ? "Administrador General" : usuario;
+      const spanNombre = document.getElementById("nombreUsuario");
+      if (spanNombre) {
+        spanNombre.textContent = visibleName;
+      }
+
+      const btnSalir = document.getElementById("cerrarSesionBtn");
+      if (btnSalir) {
+        btnSalir.addEventListener("click", () => {
+          sessionStorage.clear();
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>
