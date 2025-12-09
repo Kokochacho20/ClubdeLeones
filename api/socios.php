@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -9,6 +10,21 @@ require_once 'db.php';
 $conn   = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 $id     = isset($_GET['id']) ? $_GET['id'] : null;
+=======
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+
+require_once 'db.php';
+
+$sql = "
+    SELECT 
+        id_socio     AS ID_SOCIO,
+        nombre_socio AS NOMBRE_SOCIO
+    FROM socios
+    WHERE estado_socio = 'A'
+    ORDER BY nombre_socio
+";
+>>>>>>> 712ecfc50c172dd2ea9bdb73836a80b3166cac04
 
 $data = json_decode(file_get_contents('php://input'), true);
 if (!is_array($data)) $data = [];
@@ -90,6 +106,7 @@ if ($method === 'GET') {
     $socios[] = $row;
   }
 
+<<<<<<< HEAD
   echo json_encode($socios);
   exit;
 }
@@ -261,3 +278,6 @@ http_response_code(405);
 echo json_encode(['ok' => false, 'error' => 'Metodo no permitido']);
 
 oci_close($conn);
+=======
+echo json_encode($socios);
+>>>>>>> 712ecfc50c172dd2ea9bdb73836a80b3166cac04
