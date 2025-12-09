@@ -4,30 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mantenimiento de Socios</title>
+    <title>Mantenimiento de Socios - Club de Leones de Tibas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 
 <body>
-
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container d-flex align-items-center justify-content-between">
                 <a class="navbar-brand d-flex align-items-center gap-2" href="menu_socio.html">
-                    <img src="../img/logotibas.png" alt="Logo Club de Leones de Tibás">
-                    <span>Área de Socios</span>
+                    <img src="../img/logotibas.png" alt="Logo Club de Leones de Tibas">
+                    <span>Area de Socios</span>
                 </a>
 
                 <ul class="navbar-nav ms-auto d-flex flex-row gap-3 menu-principal">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Configuración</a>
+                        <a class="nav-link" href="#">Configuracion</a>
                         <ul class="submenu">
                             <li><a href="mantenimiento_provincias.html">Provincias</a></li>
                             <li><a href="mantenimiento_cantones.html">Cantones</a></li>
                             <li><a href="mantenimiento_distritos.html">Distritos</a></li>
                             <li><a href="mantenimiento_tipos_actividad.html">Tipos de Actividad</a></li>
                             <li><a href="mantenimiento_socios.html">Registro de Socios</a></li>
+                            <li><a href="mantenimiento_bancos.html">Bancos</a></li>
+                            <li><a href="cuentas_bancarias.html">Cuentas Bancarias</a></li>
                             <li><a href="mantenimiento_tipos_pago.html">Tipos de Pago</a></li>
                         </ul>
                     </li>
@@ -37,7 +38,8 @@
                         <ul class="submenu">
                             <li><a href="registro_actividades.html">Registro de Actividades</a></li>
                             <li><a href="actividades_por_socio.html">Actividades por Socio</a></li>
-                            <li><a href="ingresos_egresos_actividad.html">Ingresresos/Egresos por Actividad</a></li>
+                            <li><a href="ingresos_egresos_actividad.html">Ingresos/Egresos por Actividad</a></li>
+                            <li><a href="transacciones_cuentas.html">Transacciones por Cuenta</a></li>
                         </ul>
                     </li>
 
@@ -52,7 +54,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="login.html">Cerrar Sesión</a>
+                        <a class="nav-link" href="login.html">Cerrar Sesion</a>
                     </li>
                 </ul>
             </div>
@@ -61,182 +63,131 @@
         <section class="hero">
             <div class="container">
                 <h1 class="h2 mb-2 text-white">Mantenimiento de Socios</h1>
-                <p class="lead mb-0 text-white">Complete los datos para registrar a nuevos socios</p>
+                <p class="lead mb-0 text-white">Registrar y administrar socios del club</p>
             </div>
         </section>
     </header>
 
-    <main class="container my-4">
-        <div class="card p-4 shadow-sm">
-            <h2 class="h4 text-accent mb-3">Registro de Datos Personales y de Afiliación</h2>
+    <main class="container my-4 d-flex flex-column align-items-center">
 
-            <form action="#" method="post">
+        <!-- Formulario-->
+        <div class="card p-4 mb-4 w-100" style="max-width: 1200px;">
+            <h2 class="h5 mb-3">Mantenimiento de Socios</h2>
 
-                <!-- DATOS DE AFILIACIÓN -->
-                <div class="row g-3 mb-4 border p-3 rounded-3">
-                    <h5 class="mb-3 text-accent">Datos de Afiliación</h5>
+            <form id="form-socio">
+                <input type="hidden" id="id_socio">
 
-                    <div class="col-md-2">
-                        <label for="id_socio" class="form-label">ID Socio</label>
-                        <input type="text" class="form-control" id="id_socio" value="[Auto]" disabled>
+                <div class="mb-2">
+                    <label class="form-label">Nombre del socio *</label>
+                    <input type="text" id="nombre_socio" class="form-control" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Fecha nacimiento</label>
+                        <input type="date" id="fecha_nacimiento" class="form-control">
                     </div>
-
-                    <div class="col-md-4">
-                        <label for="cedula_socio" class="form-label">Cédula</label>
-                        <input type="text" class="form-control" id="cedula_socio" name="cedula_socio" required>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Fecha ingreso *</label>
+                        <input type="date" id="fecha_ingreso" class="form-control" required>
                     </div>
+                </div>
 
-                    <div class="col-md-3">
-                        <label for="id_tipo_socio" class="form-label">Tipo de Socio</label>
-                        <select class="form-select" id="id_tipo_socio" name="id_tipo_socio" required>
-                            <option value="">Seleccione</option>
-                            <option value="1">Regular</option>
-                            <option value="2">Honorario</option>
-                            <option value="3">Vitalicio</option>
+                <div class="mb-2">
+                    <label class="form-label">Numero socio *</label>
+                    <input type="number" id="numero_socio" class="form-control" min="1" required>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Distrito</label>
+                    <select id="cod_distrito" class="form-select"></select>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Direccion</label>
+                    <textarea id="desc_direccion" class="form-control" rows="2"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Telefono 1 *</label>
+                        <input type="text" id="telefono1" maxlength="10" inputmode="numeric" pattern="\d*"
+                            class="form-control" required>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Telefono 2</label>
+                        <input type="text" id="telefono2" maxlength="10" inputmode="numeric" pattern="\d*"
+                            class="form-control">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Tipo socio *</label>
+                        <select id="tipo_socio" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="R">R - Regular</option>
+                            <option value="C">C - Cachorro</option>
+                            <option value="H">H - Honorario</option>
+                            <option value="B">B - Benefactor</option>
+                            <option value="L">L - Leo</option>
                         </select>
                     </div>
-
-                    <div class="col-md-3">
-                        <label for="id_estado_socio" class="form-label">Estado</label>
-                        <select class="form-select" id="id_estado_socio" name="id_estado_socio" required>
-                            <option value="">Seleccione</option>
-                            <option value="1">Activo</option>
-                            <option value="2">Inactivo</option>
-                            <option value="3">Suspendido</option>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Estado *</label>
+                        <select id="estado_socio" class="form-select" required>
+                            <option value="">Seleccione...</option>
+                            <option value="A">A - Activo</option>
+                            <option value="I">I - Inactivo</option>
+                            <option value="N">N - No pertenece</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- DATOS PERSONALES -->
-                <div class="row g-3 mb-4 border p-3 rounded-3">
-                    <h5 class="mb-3 text-accent">Datos Personales</h5>
-
-                    <div class="col-md-4">
-                        <label for="nombre_socio" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre_socio" name="nombre_socio" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="apellido1_socio" class="form-label">Primer Apellido</label>
-                        <input type="text" class="form-control" id="apellido1_socio" name="apellido1_socio" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="apellido2_socio" class="form-label">Segundo Apellido</label>
-                        <input type="text" class="form-control" id="apellido2_socio" name="apellido2_socio">
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="fec_nacimiento" class="form-label">F. Nacimiento</label>
-                        <input type="date" class="form-control" id="fec_nacimiento" name="fec_nacimiento">
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="genero" class="form-label">Género</label>
-                        <select class="form-select" id="genero" name="genero">
-                            <option value="">Seleccione</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Femenino</option>
-                            <option value="O">Otro</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="estado_civil" class="form-label">Estado Civil</label>
-                        <select class="form-select" id="estado_civil" name="estado_civil">
-                            <option value="">Seleccione</option>
-                            <option value="S">Soltero(a)</option>
-                            <option value="C">Casado(a)</option>
-                            <option value="D">Divorciado(a)</option>
-                            <option value="V">Viudo(a)</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="profesion" class="form-label">Profesión</label>
-                        <input type="text" class="form-control" id="profesion" name="profesion">
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" id="btn-nuevo" class="btn btn-secondary btn-sm">Borrar</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="btn-eliminar" class="btn btn-danger btn-sm" disabled>Eliminar</button>
+                        <button type="submit" class="btn btn-amarillo btn-sm">Guardar</button>
                     </div>
                 </div>
-
-                <!-- CONTACTO Y RESIDENCIA -->
-                <div class="row g-3 mb-4 border p-3 rounded-3">
-                    <h5 class="mb-3 text-accent">Contacto y Residencia</h5>
-
-                    <div class="col-md-3">
-                        <label for="telefono1" class="form-label">Celular</label>
-                        <input type="tel" class="form-control" id="telefono1" name="telefono1" required>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label for="telefono2" class="form-label">Casa/Trabajo</label>
-                        <input type="tel" class="form-control" id="telefono2" name="telefono2">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="correo_electronico" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="correo_electronico" name="correo_electronico"
-                            required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="id_distrito" class="form-label">Distrito de Residencia</label>
-                        <select class="form-select" id="id_distrito" name="id_distrito" required>
-                            <option value="">Seleccione un Distrito</option>
-                            <option value="1">Tibás Central</option>
-                            <option value="2">Cinco Esquinas</option>
-                            <option value="3">Anselmo Llorente</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-8">
-                        <label for="direccion_exacta" class="form-label">Dirección Exacta (Detalles)</label>
-                        <textarea class="form-control" id="direccion_exacta" name="direccion_exacta"
-                            rows="2"></textarea>
-                    </div>
-                </div>
-
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary">Guardar Nuevo Socio</button>
-                    <button type="button" class="btn btn-outline-primary">Modificar</button>
-                    <button type="button" class="btn btn-danger">Eliminar</button>
-                </div>
-
             </form>
+        </div>
 
-            <hr class="my-4">
-
-            <h3 class="h5">Socios Registrados</h3>
+        <!-- Lista de socios-->
+        <div class="card p-4 w-100" style="max-width: 1200px;">
+            <h2 class="h5 mb-3">Lista de Socios</h2>
             <div class="table-responsive">
-                <table class="table table-striped table-hover small">
-
+                <table class="table table-sm table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Cédula</th>
-                            <th>Nombre Completo</th>
-                            <th>Correo</th>
+                            <th>Nombre</th>
+                            <th>Telefono</th>
                             <th>Tipo</th>
                             <th>Estado</th>
-                            <th>Teléfono</th>
-                            <th>Acción</th>
+                            <th>Ubicacion</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
-
-                    <!-- ↓↓↓ ESTE ES EL QUE MODIFICO ↓↓↓ -->
-                    <tbody id="tablaSocios"></tbody>
-                    <!-- ↑↑↑ AQUI EL JS INSERTA LOS SOCIOS ↑↑↑ -->
-
+                    <tbody id="tbody-socios"></tbody>
                 </table>
             </div>
         </div>
+
     </main>
 
+
+
+
     <footer class="text-center">
-        <div class="container"><small>&copy; Club de Leones de Tibás — 2025</small></div>
+        <div class="container">
+            <small>&copy; Club de Leones de Tibas - 2025</small>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="../js/mantenimiento_socios.js?v=1"></script>
 </body>
 
 </html>
