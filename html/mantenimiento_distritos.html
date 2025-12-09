@@ -21,8 +21,6 @@
                 <ul class="navbar-nav ms-auto d-flex flex-row gap-3 menu-principal">
                     <li class="nav-item">
                         <a class="nav-link" href="#">Configuración</a>
-
-
                         <ul class="submenu">
                             <li><a href="mantenimiento_provincias.html">Provincias</a></li>
                             <li><a href="mantenimiento_cantones.html">Cantones</a></li>
@@ -55,8 +53,6 @@
                         </ul>
                     </li>
 
-
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="login.html">Cerrar Sesión</a>
                     </li>
@@ -66,8 +62,8 @@
 
         <section class="hero">
             <div class="container">
-                <h1 class="h2 mb-2">Mantenimiento de Distritos</h1>
-                <p class="lead mb-0">Control de Distritos</p>
+                <h1 class="h2 mb-2 text-white">Mantenimiento de Distritos</h1>
+                <p class="lead mb-0 text-white">Control de Distritos</p>
             </div>
         </section>
     </header>
@@ -80,19 +76,20 @@
                 <h5 class="card-title text-accent">Registrar Nuevo Distrito</h5>
 
                 <form id="form-distrito">
-                    <div class="row g-3">
-                        <input type="hidden" id="cod_distrito">
+                    <!-- Campo oculto para crear/actualizar -->
+                    <input type="hidden" id="cod_distrito">
 
+                    <div class="row g-3">
                         <div class="col-md-3">
-                            <label for="id_provincia" class="form-label">Provincia</label>
-                            <select id="id_provincia" class="form-select" required>
-                                <option value="" selected disabled>Seleccione...</option>
+                            <label for="cod_provincia" class="form-label">Provincia</label>
+                            <select id="cod_provincia" class="form-select" required>
+                                <option value="" selected disabled>Cargando provincias...</option>
                             </select>
                         </div>
 
                         <div class="col-md-3">
-                            <label for="id_canton" class="form-label">Cantón</label>
-                            <select id="id_canton" class="form-select" required disabled>
+                            <label for="cod_canton" class="form-label">Cantón</label>
+                            <select id="cod_canton" class="form-select" required disabled>
                                 <option value="" selected>Seleccione una Provincia primero</option>
                             </select>
                         </div>
@@ -101,6 +98,7 @@
                             <label for="nombre_distrito" class="form-label">Nombre del Distrito</label>
                             <input type="text" class="form-control" id="nombre_distrito" required>
                         </div>
+
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="submit" class="btn btn-azul w-100">Guardar</button>
                         </div>
@@ -120,19 +118,20 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-
                 <tbody id="tbody-distritos">
+                    <!-- Filas generadas por distritos.js -->
                 </tbody>
             </table>
         </div>
     </main>
 
     <footer class="text-center">
-        <div class="container"><small>&copy; Club de Leones de Tibas — 2025</small></div>
+        <div class="container"><small>&copy; Club de Leones de Tibás — 2025</small></div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/ProtectoLeonesLenguajes/js/distritos.js?v=1"></script>
+    <!-- Igual que en las demás pantallas, ruta relativa al JS -->
+    <script src="../js/distritos.js"></script>
 
 </body>
 

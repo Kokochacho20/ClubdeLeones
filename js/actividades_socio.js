@@ -1,118 +1,115 @@
-const API_BASE = '../api';
+const API_ACTIVIDADES_SOCIO = "../api/actividades_socio.php";
+const API_SOCIOS_AS = "../api/RegistroDeSocios.php";
 
-const socioSelect = document.getElementById('socio');
-const formFiltro = document.getElementById('form-filtro-actividades-socio');
-const tbodyActividadesSocio = document.getElementById('tbody-actividades-socio');
+async function cargarSociosAS() {
+    const select = document.getElementById("id_socio");
+    if (!select) return;
 
-const resumenSocioNombre = document.getElementById('resumen-socio-nombre');
-const resumenTotalActiv = document.getElementById('resumen-total-activ');
-const resumenTotalMonto = document.getElementById('resumen-total-monto');
-const resumenTotalSaldo = document.getElementById('resumen-total-saldo');
+    select.innerHTML = '<option value="">Seleccione un socio...</option>';
 
-function formatearFecha(isoString) {
-  if (!isoString) return '';
-  return isoString.substring(0, 10);
+    try {
+        const res = await fetch(API_SOCIOS_AS);
+        const data = await res.json();
+
+        const lista = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
+
+        lista.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.ID_SOCIO || s.id_socio || "";
+            opt.textContent = s.NOMBRE_SOCIO || s.nombre_socio || "";
+            select.appendChild(opt);
+        });
+    } catch (err) {
+        console.error("Error cargando socios:", err);
+    }
 }
 
-function traducirEstado(codigo) {
-  switch (codigo) {
-    case 'R': return 'Registrado';
-    case 'P': return 'En proceso';
-    case 'C': return 'Cancelado';
-    default:  return codigo || '';
-  }
-}
+async function consultarActividadesSocio(ev) {
+    ev.preventDefault();
 
-async function cargarSocios() {
-  try {
-    const res = await fetch(`${API_BASE}/socios.php`);
-    if (!res.ok) throw new Error('Error al cargar socios');
+    const form = document.getElementById("formActividadesSocio");
+    const socioSelect = document.getElementById("id_socio");
+    const desde = document.getElementById("desde").value;
+    const hasta = document.getElementById("hasta").value;
 
-    const socios = await res.json();
-    socioSelect.innerHTML = '<option value="">Seleccione un socio</option>';
-
-    socios.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.ID_SOCIO;
-      opt.textContent = s.NOMBRE_SOCIO;
-      socioSelect.appendChild(opt);
-    });
-  } catch (err) {
-    console.error(err);
-    alert('No se pudieron cargar los socios');
-  }
-}
-
-async function buscarActividades(e) {
-  if (e) e.preventDefault();
-
-  const idSocio = socioSelect.value;
-  const desde = document.getElementById('desde').value;
-  const hasta = document.getElementById('hasta').value;
-
-  const params = new URLSearchParams();
-  if (idSocio) params.append('id_socio', idSocio);
-  if (desde)  params.append('desde', desde);
-  if (hasta)  params.append('hasta', hasta);
-
-  try {
-    const res = await fetch(`${API_BASE}/actividades_socio.php?` + params.toString());
-    if (!res.ok) throw new Error('Error al cargar actividades por socio');
-
-    const registros = await res.json();
-    tbodyActividadesSocio.innerHTML = '';
-
-    if (!registros.length) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td colspan="6" class="text-center">No hay registros para los filtros seleccionados</td>';
-      tbodyActividadesSocio.appendChild(tr);
-
-      resumenSocioNombre.textContent =
-        idSocio ? socioSelect.options[socioSelect.selectedIndex].text : '-';
-      resumenTotalActiv.textContent = '0';
-      resumenTotalMonto.textContent = '0.00';
-      resumenTotalSaldo.textContent = '0.00';
-      return;
+    if (!socioSelect.value) {
+        form.classList.add("was-validated");
+        return;
     }
 
-    let totalActiv = 0;
-    let totalMonto = 0;
-    let totalSaldo = 0;
+    const idSocio = socioSelect.value;
 
-    registros.forEach(r => {
-      totalActiv++;
-      const monto = Number(r.MONTO_COMPROM) || 0;
-      const saldo = Number(r.SALDO_COMPROM) || 0;
-      totalMonto += monto;
-      totalSaldo += saldo;
+    const params = new URLSearchParams();
+    params.append("id_socio", idSocio);
+    if (desde) params.append("desde", desde);
+    if (hasta) params.append("hasta", hasta);
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${formatearFecha(r.FEC_COMPROM)}</td>
-        <td>${r.NOMBRE_ACTIVIDAD}</td>
-        <td>${r.NOMBRE_SOCIO}</td>
-        <td>${traducirEstado(r.ESTADO)}</td>
-        <td class="text-end">${monto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}</td>
-        <td class="text-end">${saldo.toLocaleString('es-CR', { minimumFractionDigits: 2 })}</td>
-      `;
-      tbodyActividadesSocio.appendChild(tr);
-    });
+    try {
+        const res = await fetch(`${API_ACTIVIDADES_SOCIO}?${params.toString()}`);
+        const data = await res.json();
 
-    resumenSocioNombre.textContent =
-      idSocio ? socioSelect.options[socioSelect.selectedIndex].text : 'Varios socios';
-    resumenTotalActiv.textContent = totalActiv.toString();
-    resumenTotalMonto.textContent = totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 });
-    resumenTotalSaldo.textContent = totalSaldo.toLocaleString('es-CR', { minimumFractionDigits: 2 });
+        const tbody = document.getElementById("tablaActividadesSocio");
+        tbody.innerHTML = "";
 
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
+        if (!Array.isArray(data) || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">No hay actividades registradas para este socio en el rango seleccionado</td>
+                </tr>
+            `;
+            actualizarResumenAS(socioSelect, 0, 0, 0);
+            return;
+        }
+
+        let totalActiv = 0;
+        let totalComprometido = 0;
+        let totalSaldo = 0;
+
+        data.forEach(a => {
+            const monto = Number(a.MONTO_COMPROM || a.monto_comprom || 0);
+            const saldo = Number(a.SALDO_COMPROM || a.saldo_comprom || 0);
+
+            totalActiv += 1;
+            totalComprometido += monto;
+            totalSaldo += saldo;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${a.NOMBRE_ACTIVIDAD || a.nombre_actividad || ""}</td>
+                    <td>${a.FEC_COMPROM || a.fec_comprom || ""}</td>
+                    <td>${a.ESTADO || a.estado || ""}</td>
+                    <td>${monto.toLocaleString("es-CR")}</td>
+                    <td>${saldo.toLocaleString("es-CR")}</td>
+                </tr>
+            `;
+        });
+
+        actualizarResumenAS(socioSelect, totalActiv, totalComprometido, totalSaldo);
+    } catch (err) {
+        console.error("Error consultando actividades por socio:", err);
+        const tbody = document.getElementById("tablaActividadesSocio");
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center">No se pudieron cargar las actividades</td>
+            </tr>
+        `;
+        actualizarResumenAS(socioSelect, 0, 0, 0);
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!formFiltro || !tbodyActividadesSocio) return;
-  cargarSocios();
-  buscarActividades();
-  formFiltro.addEventListener('submit', buscarActividades);
+function actualizarResumenAS(socioSelect, totalActiv, totalComprometido, totalSaldo) {
+    const nombreSocio = socioSelect.options[socioSelect.selectedIndex]
+        ? socioSelect.options[socioSelect.selectedIndex].textContent
+        : "N/A";
+
+    document.getElementById("resumenNombreSocio").textContent = nombreSocio || "N/A";
+    document.getElementById("resumenTotalActividades").textContent = totalActiv;
+    document.getElementById("resumenTotalComprometido").textContent = totalComprometido.toLocaleString("es-CR");
+    document.getElementById("resumenTotalSaldo").textContent = totalSaldo.toLocaleString("es-CR");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    cargarSociosAS();
+    const form = document.getElementById("formActividadesSocio");
+    if (form) form.addEventListener("submit", consultarActividadesSocio);
 });

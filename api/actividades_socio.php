@@ -1,6 +1,15 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
 require_once 'db.php';
+
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -10,54 +19,64 @@ if ($method !== 'GET') {
     exit;
 }
 
-$idSocio = isset($_GET['id_socio']) ? trim($_GET['id_socio']) : null;
-$desde   = isset($_GET['desde']) ? trim($_GET['desde']) : null;
-$hasta   = isset($_GET['hasta']) ? trim($_GET['hasta']) : null;
-
-$sql = "SELECT a.id_activ_soc,
-               a.fec_comprom,
-               a.estado,
-               a.monto_comprom,
-               a.saldo_comprom,
-               s.id_socio,
-               s.nombre_socio,
-               ac.id_actividad,
-               ac.nombre_actividad,
-               ac.fecha_actividad
-          FROM activ_socio a
-          JOIN socios s       ON s.id_socio = a.id_socio
-          JOIN actividades ac ON ac.id_actividad = a.id_actividad
-         WHERE 1 = 1";
-
-$params = [];
-
-if ($idSocio !== null && $idSocio !== '') {
-    $sql .= " AND a.id_socio = :id_socio";
-    $params[':id_socio'] = $idSocio;
+try {
+    $conn = getConnection();
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['ok' => false, 'mensaje' => 'Error de conexión a la base de datos']);
+    exit;
 }
 
-if ($desde !== null && $desde !== '') {
-    $sql .= " AND a.fec_comprom >= TO_DATE(:desde, 'YYYY-MM-DD')";
-    $params[':desde'] = $desde;
+$idSocio = isset($_GET['id_socio']) ? $_GET['id_socio'] : null;
+$desde = isset($_GET['desde']) ? $_GET['desde'] : null;
+$hasta = isset($_GET['hasta']) ? $_GET['hasta'] : null;
+
+if (!$idSocio) {
+    echo json_encode([]);
+    oci_close($conn);
+    exit;
 }
 
-if ($hasta !== null && $hasta !== '') {
-    $sql .= " AND a.fec_comprom <= TO_DATE(:hasta, 'YYYY-MM-DD')";
-    $params[':hasta'] = $hasta;
+$sql = "SELECT 
+            a.ID_ACTIV_SOC,
+            a.ID_ACTIVIDAD,
+            ac.NOMBRE_ACTIVIDAD,
+            TO_CHAR(a.FEC_COMPROM, 'YYYY-MM-DD') AS FEC_COMPROM,
+            a.ESTADO,
+            a.MONTO_COMPROM,
+            a.SALDO_COMPROM
+        FROM ACTIV_SOCIO a
+        JOIN ACTIVIDADES ac ON ac.ID_ACTIVIDAD = a.ID_ACTIVIDAD
+        WHERE a.ID_SOCIO = :p_id_socio";
+
+if ($desde) {
+    $sql .= " AND a.FEC_COMPROM >= TO_DATE(:p_desde, 'YYYY-MM-DD')";
+}
+if ($hasta) {
+    $sql .= " AND a.FEC_COMPROM <= TO_DATE(:p_hasta, 'YYYY-MM-DD')";
 }
 
-$sql .= " ORDER BY a.fec_comprom DESC";
+$sql .= " ORDER BY a.FEC_COMPROM DESC, ac.NOMBRE_ACTIVIDAD";
 
-$stid = oci_parse($conn, $sql);
-foreach ($params as $nombre => &$valor) {
-    oci_bind_by_name($stid, $nombre, $valor);
+$stmt = oci_parse($conn, $sql);
+
+oci_bind_by_name($stmt, ':p_id_socio', $idSocio);
+
+if ($desde) {
+    oci_bind_by_name($stmt, ':p_desde', $desde);
 }
-oci_execute($stid);
-
-$registros = [];
-while ($row = oci_fetch_assoc($stid)) {
-    $registros[] = $row;
+if ($hasta) {
+    oci_bind_by_name($stmt, ':p_hasta', $hasta);
 }
-oci_free_statement($stid);
 
-echo json_encode($registros);
+oci_execute($stmt);
+
+$result = [];
+while ($row = oci_fetch_assoc($stmt)) {
+    $result[] = $row;
+}
+
+echo json_encode($result);
+
+oci_free_statement($stmt);
+oci_close($conn);

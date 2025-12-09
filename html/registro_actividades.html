@@ -2,21 +2,16 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Registro de Actividades</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registro de Actividades – Club de Leones de Tibás</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/styles.css">
-    <style>
-        .required:after {
-            content: " *";
-            color: #dc3545;
-        }
-    </style>
 </head>
 
 <body>
+
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container d-flex align-items-center justify-content-between">
@@ -61,171 +56,133 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="login.html">Cerrar Sesión</a>
+                        <a class="nav-link" href="login.html" id="cerrarSesionBtn">Cerrar Sesión</a>
                     </li>
                 </ul>
             </div>
         </nav>
 
         <section class="hero">
-            <div class="container d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h2 mb-2">Registro de Actividades</h1>
-                    <p class="lead mb-0">Control de actividades</p>
-                </div>
-                <button id="btn-nuevo" class="btn btn-primary">
-                    Nueva Actividad
-                </button>
+            <div class="container">
+                <h1 class="h3 mb-1 text-white">Registro de actividades del Club</h1>
+                <p class="lead mb-0 text-white-50">Gestione las actividades, tipos y socios responsables.</p>
             </div>
         </section>
     </header>
 
+    <main class="container py-5">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h6 mb-3">Datos de la actividad</h2>
+                        <form id="formActividad" novalidate>
+                            <input type="hidden" id="id_actividad" name="id_actividad">
 
-    <main class="container my-4">
-        <div id="alert-container"></div>
-
-        <!-- Formulario de Actividades -->
-        <div class="card mb-4 shadow-sm" id="form-actividad-container">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">
-                    <i class="bi bi-calendar-plus me-2"></i>
-                    <span>Nueva Actividad</span>
-                </h5>
-            </div>
-            <div class="card-body">
-                <form id="form-actividad" class="needs-validation" novalidate>
-                    <input type="hidden" id="id_actividad">
-
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label for="nombre_actividad" class="form-label required">Nombre de la Actividad</label>
-                            <input type="text" class="form-control" id="nombre_actividad" required>
-                            <div class="invalid-feedback">
-                                Por favor ingrese el nombre de la actividad.
+                            <div class="mb-3">
+                                <label for="nombre_actividad" class="form-label">Nombre de la actividad</label>
+                                <input type="text" class="form-control" id="nombre_actividad" name="nombre_actividad"
+                                    required>
+                                <div class="invalid-feedback">
+                                    Ingrese el nombre de la actividad.
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-3">
-                            <label for="id_tipo_actividad" class="form-label required">Tipo de Actividad</label>
-                            <select class="form-select" id="id_tipo_actividad" required>
-                                <option value="">Seleccione...</option>
-                                <!-- Se llenará dinámicamente -->
-                            </select>
-                            <div class="invalid-feedback">
-                                Por favor seleccione el tipo de actividad.
+                            <div class="mb-3">
+                                <label for="id_tipo_actividad" class="form-label">Tipo de actividad</label>
+                                <select class="form-select" id="id_tipo_actividad" name="id_tipo_actividad" required>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Seleccione un tipo de actividad.
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-3">
-                            <label for="fec_actividad" class="form-label required">Fecha</label>
-                            <input type="date" class="form-control" id="fec_actividad" required>
-                            <div class="invalid-feedback">
-                                Por favor seleccione una fecha.
+                            <div class="mb-3">
+                                <label for="fec_actividad" class="form-label">Fecha de la actividad</label>
+                                <input type="date" class="form-control" id="fec_actividad" name="fec_actividad"
+                                    required>
+                                <div class="invalid-feedback">
+                                    Seleccione la fecha de la actividad.
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-md-6">
-                            <label for="id_socio_responsable" class="form-label">Socio Responsable</label>
-                            <select class="form-select" id="id_socio_responsable">
-                                <option value="">Seleccione un socio...</option>
-                                <!-- Se llenará dinámicamente -->
-                            </select>
-                        </div>
+                            <div class="mb-3">
+                                <label for="id_socio_responsable" class="form-label">Socio responsable</label>
+                                <select class="form-select" id="id_socio_responsable" name="id_socio_responsable">
+                                    <option value="">Seleccione un socio...</option>
+                                </select>
+                            </div>
 
-                        <div class="col-12">
-                            <label for="objetivo_actividad" class="form-label">Objetivo/Descripción de la
-                                Actividad</label>
-                            <textarea class="form-control" id="objetivo_actividad" rows="3"></textarea>
-                        </div>
-                    </div>
+                            <div class="mb-3">
+                                <label for="objetivo_actividad" class="form-label">Objetivo / descripción</label>
+                                <textarea class="form-control" id="objetivo_actividad" name="objetivo_actividad"
+                                    rows="3"></textarea>
+                            </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" id="btn-guardar" class="btn btn-primary">
-                            <i class="bi bi-save me-1"></i>Guardar
-                        </button>
-                        <button type="button" id="btn-cancelar" class="btn btn-outline-secondary"
-                            style="display: none;">
-                            <i class="bi bi-x-lg me-1"></i>Cancelar
-                        </button>
-                        <button type="button" id="btn-eliminar" class="btn btn-outline-danger ms-auto"
-                            style="display: none;" data-bs-toggle="tooltip" title="Eliminar actividad">
-                            <i class="bi bi-trash me-1"></i>Eliminar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Listado de Actividades -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="bi bi-list-check me-2"></i>Actividades Registradas
-                </h5>
-                <div class="d-flex align-items-center">
-                    <div class="input-group input-group-sm" style="max-width: 250px;">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" id="buscar-actividad" class="form-control" placeholder="Buscar actividad...">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-primary"
+                                    onclick="registrarActividad()">Guardar</button>
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="actualizarActividad()">Actualizar</button>
+                                <button type="button" class="btn btn-outline-secondary"
+                                    onclick="limpiarFormulario()">Limpiar</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="tabla-actividades">
-                        <thead class="table-light">
-                            <tr>
-                                <th width="80">ID</th>
-                                <th width="120">Fecha</th>
-                                <th>Actividad</th>
-                                <th width="180">Tipo</th>
-                                <th width="200">Responsable</th>
-                                <th width="100" class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Se llenará dinámicamente -->
-                            <tr>
-                                <td colspan="6" class="text-center py-4">
-                                    <div class="text-muted">
-                                        <i class="bi bi-arrow-repeat fa-spin me-2"></i>Cargando actividades...
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h6 mb-3">Listado de actividades</h2>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Socio resp.</th>
+                                        <th>Objetivo</th>
+                                        <th style="width:120px">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaActividades">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="footer mt-5 py-3 bg-light">
-        <div class="container text-center">
-            <small class="text-muted">&copy; 2025 Club de Leones de Tibás. Todos los derechos reservados.</small>
-        </div>
+    <footer class="text-center mt-auto">
+        <div class="container"><small>&copy; Club de Leones de Tibás — 2025</small></div>
     </footer>
 
-    <!-- Modal de Confirmación -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalLabel">Confirmar Eliminación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    ¿Está seguro que desea eliminar esta actividad? Esta acción no se puede deshacer.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" id="btn-confirmar-eliminar" class="btn btn-danger">Eliminar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/actividades.js"></script>
+    <script src="../js/RegistroDeActividades.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const usuario = sessionStorage.getItem('usuario');
+            if (!usuario) {
+                window.location.href = "login.html";
+                return;
+            }
+            const cerrar = document.getElementById("cerrarSesionBtn");
+            if (cerrar) {
+                cerrar.addEventListener("click", () => {
+                    sessionStorage.clear();
+                });
+            }
+        });
+    </script>
+
 </body>
 
 </html>
