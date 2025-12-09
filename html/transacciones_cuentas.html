@@ -55,7 +55,6 @@
             </ul>
           </li>
 
-
           <li class="nav-item">
             <a class="nav-link" href="login.html">Cerrar Sesión</a>
           </li>
@@ -75,60 +74,46 @@
     <div class="card p-4 shadow-sm">
       <h2 class="h4 text-accent mb-3">Registrar Nueva Transacción</h2>
 
-      <form action="#" method="post">
+      <form action="#" method="post" id="form">
         <div class="row g-3 align-items-end">
 
+          <!-- Tipo transaccion -->
           <div class="col-md-4">
-            <label for="id_activ_soc" class="form-label">Transacciones de la cuenta bancaria</label>
-            <input type="number" class="form-control" id="id_activ_soc" name="id_activ_soc" required>
-          </div>
-
-          <div class="col-md-4">
-            <label for="fec_transaccion" class="form-label">Fecha de Transacción</label>
-            <input type="date" class="form-control" id="fec_transaccion" name="fec_transaccion" required>
-          </div>
-
-          <div class="col-md-4">
-            <label for="id_tip_pago" class="form-label">Tipo de Pago</label>
-            <select class="form-select" id="id_tip_pago" name="id_tip_pago" required>
-              <option value="">Seleccione...</option>
-              <option value="1">Efectivo</option>
-              <option value="2">Transferencia</option>
-              <option value="3">Cheque</option>
+            <label for="tipo_transaccion" class="form-label">Tipo de transacción</label>
+            <select class="form-select" id="tipo_transaccion" name="tipo_transaccion" required>
+              <option value="" selected disabled>Seleccionar...</option>
+              <option value="D">Deposito</option>
+              <option value="R">Retiro</option>
+              <option value="T">Transferencia</option>
             </select>
           </div>
-
-          <div class="col-md-3">
-            <label for="mes_pago" class="form-label">Mes de Pago</label>
-            <input type="number" class="form-control" id="mes_pago" name="mes_pago" min="1" max="12" required>
-          </div>
-
-          <div class="col-md-3">
-            <label for="an_pago" class="form-label">Año de Pago</label>
-            <input type="number" class="form-control" id="an_pago" name="an_pago" required>
-          </div>
-
-          <div class="col-md-3">
-            <label for="moneda_transac" class="form-label">Moneda</label>
-            <select class="form-select" id="moneda_transac" name="moneda_transac" required>
-              <option value="C">Colones</option>
-              <option value="D">Dólares</option>
+          <!-- Cuenta origen -->
+          <div class="col-md-4">
+            <label for="cuenta_origen" class="form-label">Cuenta origen</label>
+            <select class="form-select" id="cuenta_origen" name="cuenta_origen" required>
+              <option value="" selected disabled>Seleccionar...</option>
             </select>
           </div>
-
-          <div class="col-md-3">
-            <label for="id_tip_cambio" class="form-label">Tipo de Cambio</label>
-            <input type="number" class="form-control" id="id_tip_cambio" name="id_tip_cambio" required>
+          <!-- Cuenta destino -->
+          <div class="col-md-4">
+            <label for="cuenta_destino" class="form-label">Cuenta destino</label>
+            <select class="form-select" id="cuenta_destino" name="cuenta_destino" required>
+              <option value="" selected disabled>Seleccionar...</option>
+            </select>
           </div>
-
-          <div class="col-md-6">
-            <label for="monto_colones" class="form-label">Monto en Colones</label>
-            <input type="number" step="0.01" class="form-control" id="monto_colones" name="monto_colones" required>
+          <!-- Moneda -->
+          <div class="col-md-4">
+            <label for="tipo_moneda" class="form-label">Moneda</label>
+            <select class="form-select" id="tipo_moneda" name="tipo_moneda" required>
+              <option value="" selected disabled>Seleccionar...</option>
+              <option value="C">Colón</option>
+              <option value="D">Dolar</option>
+            </select>
           </div>
-
-          <div class="col-md-6">
-            <label for="monto_dolares" class="form-label">Monto en Dólares</label>
-            <input type="number" step="0.01" class="form-control" id="monto_dolares" name="monto_dolares">
+          <!-- Monto -->
+          <div class="col-md-4">
+            <label for="monto" class="form-label">Monto</label>
+            <input type="number" class="form-control" id="monto" name="monto" required>
           </div>
 
           <div class="col-12 text-end">
@@ -145,45 +130,19 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Actividad Socio</th>
-              <th>Fecha</th>
-              <th>Tipo Pago</th>
-              <th>Mes</th>
-              <th>Año</th>
+              <th>Tipo transacción</th>
+              <th>Cuenta origen</th>
+              <th>Cuenta destino</th>
               <th>Moneda</th>
-              <th>Monto Colones</th>
-              <th>Monto Dólares</th>
-              <th>Tipo Cambio</th>
-              <th>Acción</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+              <th></th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>12</td>
-              <td>2025-01-15</td>
-              <td>Efectivo</td>
-              <td>1</td>
-              <td>2025</td>
-              <td>C</td>
-              <td>25000.00</td>
-              <td>-</td>
-              <td>1</td>
-              <td><a href="#">Editar</a></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>15</td>
-              <td>2025-02-10</td>
-              <td>Transferencia</td>
-              <td>2</td>
-              <td>2025</td>
-              <td>D</td>
-              <td>-</td>
-              <td>100.00</td>
-              <td>2</td>
-              <td><a href="#">Editar</a></td>
-            </tr>
+          <tbody id="tabla-cuerpo">
+
+            <!-- Lista de transacciones -->
+
           </tbody>
         </table>
       </div>

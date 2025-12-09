@@ -1,3 +1,4 @@
+--Hola Mundo
 --Definición de tablas Sistema Club de Leones de Tibás
 --Se conecta en System
 alter session set "_ORACLE_SCRIPT" = TRUE;

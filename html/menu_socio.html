@@ -25,7 +25,6 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Configuración</a>
 
-
             <ul class="submenu">
               <li><a href="mantenimiento_provincias.html">Provincias</a></li>
               <li><a href="mantenimiento_cantones.html">Cantones</a></li>
@@ -58,9 +57,8 @@
             </ul>
           </li>
 
-
           <li class="nav-item">
-            <a class="nav-link" href="login.html">Cerrar Sesión</a>
+            <a class="nav-link" href="login.html" id="cerrarSesionBtn">Cerrar Sesión</a>
           </li>
         </ul>
       </div>
@@ -68,7 +66,7 @@
 
     <section class="hero">
       <div class="container">
-        <h1 class="h2 mb-2 text-white">(Nombre de socio)</h1>
+        <h1 class="h2 mb-2 text-white" id="nombreUsuario">(Nombre de socio)</h1>
         <p class="lead mb-0 text-white">Bienvenido</p>
       </div>
     </section>
@@ -81,6 +79,25 @@
   <footer class="text-center mt-auto">
     <div class="container"><small>&copy; Club de Leones de Tibás — 2025</small></div>
   </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const usuario = sessionStorage.getItem('usuario');
+
+      if (!usuario) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const visibleName = usuario === "admin" ? "Administrador" : usuario;
+      document.getElementById("nombreUsuario").textContent = visibleName;
+
+      document.getElementById("cerrarSesionBtn").addEventListener("click", () => {
+        sessionStorage.clear();
+      });
+    });
+  </script>
+
 </body>
 
 </html>

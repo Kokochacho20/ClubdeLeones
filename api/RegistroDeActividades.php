@@ -1,156 +1,172 @@
 <?php
 require_once 'db.php';
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-$conn = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 
-if ($method === 'GET') {
-
-    $sql = "SELECT 
-                id_actividad AS ID_ACTIVIDAD,
-                nombre_actividad AS NOMBRE_ACTIVIDAD,
-                descripcion AS DESCRIPCION,
-                fecha_actividad AS FECHA_ACTIVIDAD,
-                lugar AS LUGAR,
-                estado AS ESTADO
-            FROM actividades
-            ORDER BY id_actividad";
-
-    $stid = oci_parse($conn, $sql);
-    oci_execute($stid);
-
-    $listado = [];
-    while ($fila = oci_fetch_assoc($stid)) {
-        $listado[] = $fila;
-    }
-
-    echo json_encode($listado);
+try {
+    $conn = getConnection();
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['ok' => false, 'mensaje' => 'Error de conexión a la base de datos']);
     exit;
 }
 
+if ($method === 'GET') {
+    $sql = "SELECT 
+                ID_ACTIVIDAD,
+                NOMBRE_ACTIVIDAD,
+                ID_TIPO_ACTIVIDAD,
+                FEC_ACTIVIDAD,
+                ID_SOCIO_RESP,
+                OBJETIVO
+            FROM ACTIVIDADES
+            ORDER BY FEC_ACTIVIDAD DESC, ID_ACTIVIDAD DESC";
+
+    $stmt = oci_parse($conn, $sql);
+    oci_execute($stmt);
+
+    $result = [];
+    while ($row = oci_fetch_assoc($stmt)) {
+        $result[] = $row;
+    }
+
+    echo json_encode($result);
+    oci_free_statement($stmt);
+    oci_close($conn);
+    exit;
+}
+
+$input = json_decode(file_get_contents('php://input'), true);
+
 if ($method === 'POST') {
+    $nombre = isset($input['nombre_actividad']) ? trim($input['nombre_actividad']) : '';
+    $idTipo = isset($input['id_tipo_actividad']) ? $input['id_tipo_actividad'] : null;
+    $fecha = isset($input['fec_actividad']) ? $input['fec_actividad'] : null;
+    $idSocio = isset($input['id_socio_resp']) ? $input['id_socio_resp'] : null;
+    $objetivo = isset($input['objetivo_actividad']) ? trim($input['objetivo_actividad']) : '';
 
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    $nombre = $data['nombre_actividad'] ?? null;
-    $desc   = $data['descripcion'] ?? null;
-    $fecha  = $data['fecha_actividad'] ?? null;
-    $lugar  = $data['lugar'] ?? null;
-    $estado = $data['estado'] ?? 'A';
-
-    if (!$nombre || !$fecha) {
-        echo json_encode(["ok" => false, "mensaje" => "Faltan datos obligatorios"]);
+    if ($nombre === '' || !$idTipo || !$fecha) {
+        echo json_encode(['ok' => false, 'mensaje' => 'Nombre, tipo y fecha son obligatorios']);
         exit;
     }
 
-    $sql = "INSERT INTO actividades(
-                nombre_actividad,
-                descripcion,
-                fecha_actividad,
-                lugar,
-                estado
+    $sql = "INSERT INTO ACTIVIDADES (
+                ID_ACTIVIDAD,
+                NOMBRE_ACTIVIDAD,
+                ID_TIPO_ACTIVIDAD,
+                FEC_ACTIVIDAD,
+                ID_SOCIO_RESP,
+                OBJETIVO
             ) VALUES (
-                :nombre,
-                :desc,
-                TO_DATE(:fecha, 'YYYY-MM-DD'),
-                :lugar,
-                :estado
-            )";
+                SEQ_ACTIVIDADES.NEXTVAL,
+                :p_nombre,
+                :p_id_tipo,
+                TO_DATE(:p_fecha, 'YYYY-MM-DD'),
+                :p_id_socio,
+                :p_objetivo
+            ) RETURNING ID_ACTIVIDAD INTO :p_id_out";
 
-    $stid = oci_parse($conn, $sql);
+    $stmt = oci_parse($conn, $sql);
 
-    oci_bind_by_name($stid, ":nombre", $nombre);
-    oci_bind_by_name($stid, ":desc", $desc);
-    oci_bind_by_name($stid, ":fecha", $fecha);
-    oci_bind_by_name($stid, ":lugar", $lugar);
-    oci_bind_by_name($stid, ":estado", $estado);
+    oci_bind_by_name($stmt, ':p_nombre', $nombre);
+    oci_bind_by_name($stmt, ':p_id_tipo', $idTipo);
+    oci_bind_by_name($stmt, ':p_fecha', $fecha);
+    oci_bind_by_name($stmt, ':p_id_socio', $idSocio);
+    oci_bind_by_name($stmt, ':p_objetivo', $objetivo);
+    oci_bind_by_name($stmt, ':p_id_out', $idOut, 32);
 
-    if (oci_execute($stid)) {
-        oci_commit($conn);
-        echo json_encode(["ok" => true, "mensaje" => "Actividad registrada"]);
+    $ok = oci_execute($stmt, OCI_COMMIT_ON_SUCCESS);
+
+    if ($ok) {
+        echo json_encode(['ok' => true, 'mensaje' => 'Actividad registrada correctamente', 'id_actividad' => $idOut]);
     } else {
-        echo json_encode(["ok" => false, "mensaje" => "Error al registrar"]);
+        $e = oci_error($stmt);
+        echo json_encode(['ok' => false, 'mensaje' => 'Error al registrar la actividad']);
     }
 
+    oci_free_statement($stmt);
+    oci_close($conn);
     exit;
 }
 
 if ($method === 'PUT') {
-
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    $id     = $data['id_actividad'] ?? null;
-    $nombre = $data['nombre_actividad'] ?? null;
-    $desc   = $data['descripcion'] ?? null;
-    $fecha  = $data['fecha_actividad'] ?? null;
-    $lugar  = $data['lugar'] ?? null;
-    $estado = $data['estado'] ?? null;
+    $id = isset($input['id_actividad']) ? $input['id_actividad'] : null;
+    $nombre = isset($input['nombre_actividad']) ? trim($input['nombre_actividad']) : '';
+    $idTipo = isset($input['id_tipo_actividad']) ? $input['id_tipo_actividad'] : null;
+    $fecha = isset($input['fec_actividad']) ? $input['fec_actividad'] : null;
+    $idSocio = isset($input['id_socio_resp']) ? $input['id_socio_resp'] : null;
+    $objetivo = isset($input['objetivo_actividad']) ? trim($input['objetivo_actividad']) : '';
 
     if (!$id) {
-        echo json_encode(["ok" => false, "mensaje" => "Falta el ID"]);
+        echo json_encode(['ok' => false, 'mensaje' => 'Falta el ID de la actividad']);
         exit;
     }
 
-    $sql = "UPDATE actividades
-            SET nombre_actividad = :nombre,
-                descripcion = :desc,
-                fecha_actividad = TO_DATE(:fecha, 'YYYY-MM-DD'),
-                lugar = :lugar,
-                estado = :estado
-            WHERE id_actividad = :id";
+    $sql = "UPDATE ACTIVIDADES
+            SET NOMBRE_ACTIVIDAD = :p_nombre,
+                ID_TIPO_ACTIVIDAD = :p_id_tipo,
+                FEC_ACTIVIDAD = TO_DATE(:p_fecha, 'YYYY-MM-DD'),
+                ID_SOCIO_RESP = :p_id_socio,
+                OBJETIVO = :p_objetivo
+            WHERE ID_ACTIVIDAD = :p_id";
 
-    $stid = oci_parse($conn, $sql);
+    $stmt = oci_parse($conn, $sql);
 
-    oci_bind_by_name($stid, ":nombre", $nombre);
-    oci_bind_by_name($stid, ":desc", $desc);
-    oci_bind_by_name($stid, ":fecha", $fecha);
-    oci_bind_by_name($stid, ":lugar", $lugar);
-    oci_bind_by_name($stid, ":estado", $estado);
-    oci_bind_by_name($stid, ":id", $id);
+    oci_bind_by_name($stmt, ':p_nombre', $nombre);
+    oci_bind_by_name($stmt, ':p_id_tipo', $idTipo);
+    oci_bind_by_name($stmt, ':p_fecha', $fecha);
+    oci_bind_by_name($stmt, ':p_id_socio', $idSocio);
+    oci_bind_by_name($stmt, ':p_objetivo', $objetivo);
+    oci_bind_by_name($stmt, ':p_id', $id);
 
-    if (oci_execute($stid)) {
-        oci_commit($conn);
-        echo json_encode(["ok" => true, "mensaje" => "Actividad actualizada"]);
+    $ok = oci_execute($stmt, OCI_COMMIT_ON_SUCCESS);
+
+    if ($ok) {
+        echo json_encode(['ok' => true, 'mensaje' => 'Actividad actualizada correctamente']);
     } else {
-        echo json_encode(["ok" => false, "mensaje" => "Error al actualizar"]);
+        $e = oci_error($stmt);
+        echo json_encode(['ok' => false, 'mensaje' => 'Error al actualizar la actividad']);
     }
 
+    oci_free_statement($stmt);
+    oci_close($conn);
     exit;
 }
 
 if ($method === 'DELETE') {
-
-    $data = json_decode(file_get_contents("php://input"), true);
-    $id = $data['id_actividad'] ?? null;
+    $id = isset($input['id_actividad']) ? $input['id_actividad'] : null;
 
     if (!$id) {
-        echo json_encode(["ok" => false, "mensaje" => "Falta el ID"]);
+        echo json_encode(['ok' => false, 'mensaje' => 'Falta el ID de la actividad']);
         exit;
     }
 
-    $sql = "DELETE FROM actividades WHERE id_actividad = :id";
+    $sql = "DELETE FROM ACTIVIDADES WHERE ID_ACTIVIDAD = :p_id";
+    $stmt = oci_parse($conn, $sql);
+    oci_bind_by_name($stmt, ':p_id', $id);
 
-    $stid = oci_parse($conn, $sql);
-    oci_bind_by_name($stid, ":id", $id);
+    $ok = oci_execute($stmt, OCI_COMMIT_ON_SUCCESS);
 
-    if (oci_execute($stid)) {
-        oci_commit($conn);
-        echo json_encode(["ok" => true, "mensaje" => "Actividad eliminada"]);
+    if ($ok) {
+        echo json_encode(['ok' => true, 'mensaje' => 'Actividad eliminada correctamente']);
     } else {
-        echo json_encode(["ok" => false, "mensaje" => "Error al eliminar"]);
+        $e = oci_error($stmt);
+        echo json_encode(['ok' => false, 'mensaje' => 'Error al eliminar la actividad']);
     }
 
+    oci_free_statement($stmt);
+    oci_close($conn);
     exit;
 }
 
-echo json_encode(["error" => "Método no permitido"]);
+echo json_encode(['ok' => false, 'mensaje' => 'Método no soportado']);
