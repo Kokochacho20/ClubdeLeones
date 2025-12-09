@@ -1,16 +1,45 @@
-const API_BASE = './api';
+const API_BASE = '../api';
 
-const formTransacCta = document.getElementById('form-transaccta');
-const tbodyTransacCta = document.getElementById('tbody-transaccta');
+const formulario = document.getElementById('form');
+const tablaCuerpo = document.getElementById('tabla-cuerpo');
+const cuentaOrigenCMB = document.getElementById('cuenta_origen');
+const cuentaDestinoCMB = document.getElementById('cuenta_destino');
 
-// listado transacciones de cuenta
-async function cargarTransacCta() {
+// Cargar selects
+async function cargarSelects() {
   try {
-    const res = await fetch(`${API_BASE}/transaccta.php`);
+    const res = await fetch(`${API_BASE}/cuentas_bancarias.php`);
+    if (!res.ok) throw new Error('Error al cargar cuentas bancarias');
+    const cuentas = await res.json();
+
+    // Cuentas origen
+    cuentaOrigenCMB.innerHTML = '<option value="" selected disabled>Seleccionar...</option>';
+    cuentas.forEach(c => {
+
+      cuentaOrigenCMB.innerHTML += `<option value="${c.ID_CUENTA_BCO}">${c.NOMBRE_CUENTA_BCO}</option>`;
+    });
+    // Cuentas destino
+    cuentaDestinoCMB.innerHTML = '<option value="" selected disabled>Seleccionar...</option>';
+    cuentas.forEach(c => {
+
+      cuentaDestinoCMB.innerHTML += `<option value="${c.ID_CUENTA_BCO}">${c.NOMBRE_CUENTA_BCO}</option>`;
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert('Error al cargar datos');
+  }
+}
+
+
+// listar transacciones
+async function cargarTransacciones() {
+  try {
+    const res = await fetch(`${API_BASE}/transacciones_cuentas.php`);
     if (!res.ok) throw new Error('Error al cargar transacciones de cuenta');
     const transacciones = await res.json();
 
-    tbodyTransacCta.innerHTML = '';
+    tablaCuerpo.innerHTML = '';
     transacciones.forEach(t => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -18,45 +47,46 @@ async function cargarTransacCta() {
         <td>${t.TIPO_TRANSAC_CTA}</td>
         <td>${t.ID_CUENTA_BCO_ORIGEN}</td>
         <td>${t.ID_CUENTA_BCO_DESTINO}</td>
-        <td>${t.MONEDA_TRANSAC_CTA}</td>
-        <td>${t.MONTO_COLONES}</td>
-        <td>${t.MONTO_DOLARES ?? ''}</td>
-        <td>${t.ID_TIP_CAMBIO}</td>
+        <td>${t.MONEDA_TRANSAC_CTA == 'C' ? 'Colon' : 'Dolar'}</td>
+        <td>${t.MONEDA_TRANSAC_CTA == 'C' ? t.MONTO_COLONES : t.MONTO_DOLARES}</td>
         <td>${t.FEC_TRANSAC_CTA}</td>
-        <td>${t.CONCILIADA}</td>
-        <td>${t.FEC_CONCILIA ?? ''}</td>
-        <td>
-          <button class="btn btn-sm btn-amarillo btn-editar" data-id="${t.ID_TRANSAC_CTA}">Editar</button>
-          <button class="btn btn-sm btn-danger btn-eliminar" data-id="${t.ID_TRANSAC_CTA}">Eliminar</button>
-        </td>
+        <td>${t.CONCILIADA == 'N' ? 'Sin conciliar' : 'Conciliada'}</td>
       `;
-      tbodyTransacCta.appendChild(tr);
+      tablaCuerpo.appendChild(tr);
     });
-    asignarEventosAcciones();
+    //asignarEventosAcciones();
   } catch (err) {
     console.error(err);
     alert('No se pudieron cargar las transacciones de cuenta');
   }
 }
 
-// CRUD crear transacción de cuenta
-async function crearTransacCta(e) {
-  e.preventDefault();
-  const tipo_transac_cta = document.getElementById('tipo_transac_cta').value.trim();
-  const id_cuenta_bco_origen = document.getElementById('id_cuenta_bco_origen').value.trim();
-  const id_cuenta_bco_destino = document.getElementById('id_cuenta_bco_destino').value.trim();
-  const moneda_transac_cta = document.getElementById('moneda_transac_cta').value.trim();
-  const monto_colones = document.getElementById('monto_colones').value.trim();
-  const monto_dolares = document.getElementById('monto_dolares').value.trim();
-  const id_tip_cambio = document.getElementById('id_tip_cambio').value.trim();
-  const fec_transac_cta = document.getElementById('fec_transac_cta').value.trim();
-  const conciliada = document.getElementById('conciliada').value.trim();
-  const fec_concilia = document.getElementById('fec_concilia').value.trim();
+// Crear transacción
+async function crearTransaccion(e) {
 
-  if (!tipo_transac_cta || !id_cuenta_bco_origen || !id_cuenta_bco_destino || !moneda_transac_cta || !monto_colones || !id_tip_cambio || !fec_transac_cta || !conciliada) {
+  const res = await fetch(`${API_BASE}/tipocambio.php`);
+  if (!res.ok) throw new Error('Error al cargar tipo de cambio');
+  const tipos = await res.json();
+
+  e.preventDefault();
+  const tipo_transac_cta = document.getElementById('tipo_transaccion').value.trim();
+  const id_cuenta_bco_origen = document.getElementById('cuenta_origen').value.trim();
+  const id_cuenta_bco_destino = document.getElementById('cuenta_destino').value.trim();
+  const moneda_transac_cta = document.getElementById('tipo_moneda').value.trim();
+  const monto = document.getElementById('monto').value.trim();
+
+  if (!tipo_transac_cta || !id_cuenta_bco_origen || !id_cuenta_bco_destino || !moneda_transac_cta || !monto) {
     alert('Complete todos los campos obligatorios');
     return;
   }
+
+  const monto_colones = moneda_transac_cta == 'C' ? monto : 0;
+  const monto_dolares = moneda_transac_cta == 'D' ? monto : 0;
+  const id_tip_cambio = tipos.sort((a, b) => new Date(b.fec_tip_cambio) - new Date(a.fec_tip_cambio))[0].id_tip_cambio;
+  const fec_transac_cta = new Date();
+  const conciliada = 'S';
+  const fec_concilia = new Date();
+
 
   const payload = { 
     accion: 'crear', 
@@ -73,7 +103,7 @@ async function crearTransacCta(e) {
   };
 
   try {
-    const res = await fetch(`${API_BASE}/transaccta.php`, {
+    const res = await fetch(`${API_BASE}/transacciones_cuentas.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -83,45 +113,16 @@ async function crearTransacCta(e) {
       throw new Error(respuesta.mensaje || 'Error al crear transacción de cuenta');
     }
     alert(respuesta.mensaje || 'Transacción de cuenta creada correctamente');
-    formTransacCta.reset();
-    cargarTransacCta();
+    formulario.reset();
+    cargarTransacciones();
   } catch (err) {
     console.error(err);
     alert(err.message);
   }
 }
-formTransacCta.addEventListener('submit', crearTransacCta);
-
-// CRUD eliminar transacción de cuenta
-function asignarEventosAcciones() {
-  const botonesEliminar = document.querySelectorAll('.btn-eliminar');
-  botonesEliminar.forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.getAttribute('data-id');
-      if (!confirm('¿Desea eliminar esta transacción de cuenta?')) return;
-
-      const payload = { accion: 'eliminar', id_transac_cta: id };
-
-      try {
-        const res = await fetch(`${API_BASE}/transaccta.php`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const respuesta = await res.json();
-        if (!res.ok || respuesta.ok === false) {
-          throw new Error(respuesta.mensaje || 'Error al eliminar transacción de cuenta');
-        }
-        alert(respuesta.mensaje || 'Transacción de cuenta eliminada correctamente');
-        cargarTransacCta();
-      } catch (err) {
-        console.error(err);
-        alert(err.message);
-      }
-    });
-  });
-}
+formulario.addEventListener('submit', crearTransaccion);
 
 document.addEventListener('DOMContentLoaded', () => {
-  cargarTransacCta();
+  cargarTransacciones();
+  cargarSelects();
 });
