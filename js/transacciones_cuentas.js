@@ -5,24 +5,26 @@ const tablaCuerpo = document.getElementById('tabla-cuerpo');
 const cuentaOrigenCMB = document.getElementById('cuenta_origen');
 const cuentaDestinoCMB = document.getElementById('cuenta_destino');
 
-// Cargar selects
 async function cargarSelects() {
   try {
     const res = await fetch(`${API_BASE}/cuentas_bancarias.php`);
     if (!res.ok) throw new Error('Error al cargar cuentas bancarias');
     const cuentas = await res.json();
 
-    // Cuentas origen
     cuentaOrigenCMB.innerHTML = '<option value="" selected disabled>Seleccionar...</option>';
-    cuentas.forEach(c => {
-
-      cuentaOrigenCMB.innerHTML += `<option value="${c.ID_CUENTA_BCO}">${c.NOMBRE_CUENTA_BCO}</option>`;
-    });
-    // Cuentas destino
     cuentaDestinoCMB.innerHTML = '<option value="" selected disabled>Seleccionar...</option>';
-    cuentas.forEach(c => {
 
-      cuentaDestinoCMB.innerHTML += `<option value="${c.ID_CUENTA_BCO}">${c.NOMBRE_CUENTA_BCO}</option>`;
+    cuentas.forEach(c => {
+      const id = c.ID_CUENTA_BCO || c.id_cuenta_bco;
+      const nombre = c.NOMBRE_CUENTA_BCO || c.nombre_cuenta_bco;
+
+      cuentaOrigenCMB.innerHTML += `
+        <option value="${id}">${nombre}</option>
+      `;
+
+      cuentaDestinoCMB.innerHTML += `
+        <option value="${id}">${nombre}</option>
+      `;
     });
 
   } catch (err) {
@@ -30,6 +32,7 @@ async function cargarSelects() {
     alert('Error al cargar datos');
   }
 }
+
 
 
 // listar transacciones
