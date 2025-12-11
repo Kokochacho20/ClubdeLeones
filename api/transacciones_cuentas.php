@@ -10,7 +10,6 @@ $conn = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    // LISTAR Transacciones de Cuenta
     $sql = "SELECT 
                 id_transac_cta,
                 tipo_transac_cta,
@@ -52,7 +51,6 @@ if ($method === 'POST') {
     $conciliada           = $data['conciliada'] ?? 'N';
     $fec_concilia         = $data['fec_concilia'] ?? null;
 
-    // CREAR transacción de cuenta
     if ($accion === 'crear') {
         $sql = "BEGIN insertar_transac_cta(
                     :p_tipo_transac_cta,
@@ -88,7 +86,6 @@ if ($method === 'POST') {
         exit;
     }
 
-    // ACTUALIZAR transacción de cuenta
     if ($accion === 'actualizar') {
         if (!$id_transac_cta) {
             http_response_code(400);
@@ -132,7 +129,6 @@ if ($method === 'POST') {
         exit;
     }
 
-    // ELIMINAR transacción de cuenta
     if ($accion === 'eliminar') {
         if (!$id_transac_cta) {
             http_response_code(400);
@@ -154,7 +150,6 @@ if ($method === 'POST') {
         exit;
     }
 
-    // Acción no reconocida
     http_response_code(400);
     echo json_encode(["ok" => false, "mensaje" => "Acción no reconocida"]);
     exit;

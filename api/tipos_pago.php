@@ -181,11 +181,11 @@ if ($method === 'DELETE') {
         exit;
     }
 
-    $plsql = "BEGIN eliminar_tipo_pago(:p_id_tip_pago); END;";
-    $stid  = oci_parse($conn, $plsql);
-    oci_bind_by_name($stid, ':p_id_tip_pago', $id);
+    $sql = "DELETE FROM tipo_pago WHERE id_tip_pago = :id";
+    $stid = oci_parse($conn, $sql);
+    oci_bind_by_name($stid, ':id', $id);
 
-    if (!@oci_execute($stid)) {
+    if (!@oci_execute($stid, OCI_COMMIT_ON_SUCCESS)) {
         $e = oci_error($stid);
         http_response_code(400);
         echo json_encode(['ok' => false, 'error' => $e['message']]);

@@ -21,8 +21,6 @@
         <ul class="navbar-nav ms-auto d-flex flex-row gap-3 menu-principal">
           <li class="nav-item">
             <a class="nav-link" href="#">Configuración</a>
-
-
             <ul class="submenu">
               <li><a href="mantenimiento_provincias.html">Provincias</a></li>
               <li><a href="mantenimiento_cantones.html">Cantones</a></li>
@@ -75,9 +73,9 @@
       <h2 class="h4 text-accent mb-3">Registrar Nueva Transacción</h2>
 
       <form action="#" method="post" id="form">
-        <div class="row g-3 align-items-end">
+        <input type="hidden" id="id_transac_cta">
 
-          <!-- Tipo transaccion -->
+        <div class="row g-3 align-items-end">
           <div class="col-md-4">
             <label for="tipo_transaccion" class="form-label">Tipo de transacción</label>
             <select class="form-select" id="tipo_transaccion" name="tipo_transaccion" required>
@@ -87,21 +85,18 @@
               <option value="T">Transferencia</option>
             </select>
           </div>
-          <!-- Cuenta origen -->
           <div class="col-md-4">
             <label for="cuenta_origen" class="form-label">Cuenta origen</label>
             <select class="form-select" id="cuenta_origen" name="cuenta_origen" required>
               <option value="" selected disabled>Seleccionar...</option>
             </select>
           </div>
-          <!-- Cuenta destino -->
           <div class="col-md-4">
             <label for="cuenta_destino" class="form-label">Cuenta destino</label>
             <select class="form-select" id="cuenta_destino" name="cuenta_destino" required>
               <option value="" selected disabled>Seleccionar...</option>
             </select>
           </div>
-          <!-- Moneda -->
           <div class="col-md-4">
             <label for="tipo_moneda" class="form-label">Moneda</label>
             <select class="form-select" id="tipo_moneda" name="tipo_moneda" required>
@@ -110,14 +105,13 @@
               <option value="D">Dolar</option>
             </select>
           </div>
-          <!-- Monto -->
           <div class="col-md-4">
             <label for="monto" class="form-label">Monto</label>
             <input type="number" class="form-control" id="monto" name="monto" required>
           </div>
 
           <div class="col-12 text-end">
-            <button type="submit" class="btn btn-primary">Guardar Transacción</button>
+            <button type="submit" id="btn-submit" class="btn btn-primary">Guardar Transacción</button>
           </div>
         </div>
       </form>
@@ -136,14 +130,11 @@
               <th>Moneda</th>
               <th>Monto</th>
               <th>Fecha</th>
-              <th></th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
-          <tbody id="tabla-cuerpo">
-
-            <!-- Lista de transacciones -->
-
-          </tbody>
+          <tbody id="tabla-cuerpo"></tbody>
         </table>
       </div>
     </div>

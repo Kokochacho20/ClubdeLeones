@@ -1,8 +1,8 @@
-const API_ACTIVIDADES      = "../api/RegistroDeActividades.php";
-const API_TIPOS_ACTIVIDAD  = "../api/tipo_actividad.php";
-const API_SOCIOS           = "../api/socios.php";
-const API_TIPOS_PAGO       = "../api/tipos_pago.php";     
-const API_CUENTAS_BANCARIAS = "../api/cuentas_bancarias.php"; 
+const API_ACTIVIDADES = "../api/RegistroDeActividades.php";
+const API_TIPOS_ACTIVIDAD = "../api/tipo_actividad.php";
+const API_SOCIOS = "../api/socios.php";
+const API_TIPOS_PAGO = "../api/tipos_pago.php";
+const API_CUENTAS_BANCARIAS = "../api/cuentas_bancarias.php";
 
 async function cargarTiposActividad() {
     const select = document.getElementById("id_tipo_actividad");
@@ -11,7 +11,7 @@ async function cargarTiposActividad() {
     select.innerHTML = '<option value="">Seleccione...</option>';
 
     try {
-        const res = await fetch(API_TIPO_ACTIVIDAD);
+        const res = await fetch(API_TIPOS_ACTIVIDAD);
         const raw = await res.text();
         console.log("tipo_actividad.php RAW:", raw);
 
@@ -34,17 +34,14 @@ async function cargarTiposActividad() {
 
         data.forEach(t => {
             const id =
-                t.ID_TIP_ACTIVIDAD   || t.id_tip_actividad   ||
-                t.ID_TIPO_ACTIVIDAD  || t.id_tipo_actividad;
+                t.ID_TIP_ACTIVIDAD || t.id_tip_actividad ||
+                t.ID_TIPO_ACTIVIDAD || t.id_tipo_actividad;
 
             const nombre =
-                t.NOMBRE_TIP_ACTIVIDAD   || t.nombre_tip_actividad ||
-                t.NOMBRE_TIPO_ACTIVIDAD  || t.nombre_tipo_actividad;
+                t.NOMBRE_TIP_ACTIVIDAD || t.nombre_tip_actividad ||
+                t.NOMBRE_TIPO_ACTIVIDAD || t.nombre_tipo_actividad;
 
-            if (!id || !nombre) {
-                console.warn("Registro tipo_actividad sin campos esperados:", t);
-                return;
-            }
+            if (!id || !nombre) return;
 
             const opt = document.createElement("option");
             opt.value = id;
@@ -88,11 +85,7 @@ async function cargarSocios() {
         data.forEach(s => {
             const id = s.ID_SOCIO || s.id_socio;
             const nombre = s.NOMBRE_SOCIO || s.nombre_socio;
-
-            if (!id || !nombre) {
-                console.warn("Registro socio sin campos esperados:", s);
-                return;
-            }
+            if (!id || !nombre) return;
 
             const opt = document.createElement("option");
             opt.value = id;
@@ -135,16 +128,14 @@ async function cargarTiposPago() {
 
         data.forEach(tp => {
             const id =
-                tp.ID_TIP_PAGO || tp.id_tip_pago || tp.ID_TIPO_PAGO || tp.id_tipo_pago;
+                tp.ID_TIP_PAGO || tp.id_tip_pago ||
+                tp.ID_TIPO_PAGO || tp.id_tipo_pago;
 
             const nombre =
                 tp.NOMBRE_TIP_PAGO || tp.nombre_tip_pago ||
                 tp.NOMBRE_TIPO_PAGO || tp.nombre_tipo_pago;
 
-            if (!id || !nombre) {
-                console.warn("Registro tipo_pago sin campos esperados:", tp);
-                return;
-            }
+            if (!id || !nombre) return;
 
             const opt = document.createElement("option");
             opt.value = id;
@@ -191,6 +182,7 @@ async function cargarCuentasBancarias() {
                 c.ID_CUENTA_BANCARIA || c.id_cuenta_bancaria;
 
             const nombre =
+                c.NOMBRE_CUENTA_BCO || c.nombre_cuenta_bco ||   // ← ESTE es el bueno
                 c.NOMBRE_CUENTA || c.nombre_cuenta ||
                 c.NOMBRE_CTA_BCO || c.nombre_cta_bco;
 
@@ -209,6 +201,7 @@ async function cargarCuentasBancarias() {
         console.error("Error cargando cuentas bancarias:", err);
     }
 }
+
 
 async function cargarActividades() {
     try {
@@ -243,12 +236,12 @@ async function cargarActividades() {
         }
 
         data.forEach(a => {
-            const id       = a.ID_ACTIVIDAD      || a.id_actividad;
-            const nombre   = a.NOMBRE_ACTIVIDAD  || a.nombre_actividad;
-            const tipo     = a.ID_TIPO_ACTIVIDAD || a.id_tipo_actividad;
-            const fecha    = a.FEC_ACTIVIDAD     || a.fec_actividad;
-            const socio    = a.ID_SOCIO_RESP     || a.id_socio_resp;
-            const objetivo = a.OBJETIVO_ACTIVIDAD || a.OBJETIVO || a.objetivo_actividad;
+            const id = a.ID_ACTIVIDAD || a.id_actividad;
+            const nombre = a.NOMBRE_ACTIVIDAD || a.nombre_actividad;
+            const tipo = a.ID_TIP_ACTIVIDAD || a.id_tip_actividad;
+            const fecha = a.FEC_ACTIVIDAD || a.FECHA_ACTIVIDAD || a.fec_actividad;
+            const costo = a.COSTO_ACTIVIDAD || a.costo_actividad;
+            const moneda = a.MONEDA_ACTIVIDAD || a.moneda_actividad;
 
             tabla.innerHTML += `
                 <tr>
@@ -256,8 +249,8 @@ async function cargarActividades() {
                     <td>${nombre ?? ""}</td>
                     <td>${tipo ?? ""}</td>
                     <td>${fecha ?? ""}</td>
-                    <td>${socio ?? ""}</td>
-                    <td>${objetivo ?? ""}</td>
+                    <td>${costo ?? ""}</td>
+                    <td>${moneda ?? ""}</td>
                     <td>
                         <button class="btn btn-warning btn-sm" onclick="editarActividad(${id})">Editar</button>
                         <button class="btn btn-danger btn-sm" onclick="eliminarActividad(${id})">Eliminar</button>
@@ -282,7 +275,7 @@ async function cargarActividades() {
 async function registrarActividad() {
     const actividad = obtenerDatosFormulario();
 
-    if (!actividad.nombre_actividad || !actividad.fec_actividad || !actividad.id_tipo_actividad) {
+    if (!actividad.nombre_actividad || !actividad.fecha_actividad || !actividad.id_tip_actividad) {
         alert("Debe completar al menos nombre, fecha y tipo de actividad.");
         return;
     }
@@ -294,7 +287,18 @@ async function registrarActividad() {
             body: JSON.stringify(actividad)
         });
 
-        const data = await res.json();
+        const raw = await res.text();
+        console.log("POST respuesta RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON al registrar actividad:", e);
+            alert("Error en la respuesta del servidor al registrar.");
+            return;
+        }
+
         alert(data.mensaje || "Actividad registrada correctamente");
         cargarActividades();
         limpiarFormulario();
@@ -332,12 +336,17 @@ async function editarActividad(id) {
             return;
         }
 
-        document.getElementById("id_actividad").value        = a.ID_ACTIVIDAD     || a.id_actividad;
-        document.getElementById("nombre_actividad").value     = a.NOMBRE_ACTIVIDAD || a.nombre_actividad || "";
-        document.getElementById("id_tipo_actividad").value    = a.ID_TIPO_ACTIVIDAD|| a.id_tipo_actividad || "";
-        document.getElementById("fec_actividad").value        = (a.FEC_ACTIVIDAD   || a.fec_actividad || "").substring(0,10);
-        document.getElementById("id_socio_responsable").value = a.ID_SOCIO_RESP    || a.id_socio_resp || "";
-        document.getElementById("objetivo_actividad").value   = a.OBJETIVO_ACTIVIDAD || a.OBJETIVO || a.objetivo_actividad || "";
+        document.getElementById("id_actividad").value = a.ID_ACTIVIDAD || a.id_actividad;
+        document.getElementById("nombre_actividad").value = a.NOMBRE_ACTIVIDAD || a.nombre_actividad || "";
+        document.getElementById("id_tipo_actividad").value = a.ID_TIP_ACTIVIDAD || a.id_tip_actividad || "";
+        document.getElementById("fec_actividad").value = (a.FEC_ACTIVIDAD || a.FECHA_ACTIVIDAD || a.fec_actividad || "").substring(0, 10);
+        document.getElementById("lugar_actividad").value = a.LUGAR_ACTIVIDAD || a.lugar_actividad || "";
+        document.getElementById("hora_actividad").value = (a.HORA_ACTIVIDAD || a.hora_actividad || "").substring(0, 5);
+        document.getElementById("id_tip_pago").value = a.ID_TIP_PAGO || a.id_tip_pago || "";
+        document.getElementById("costo_actividad").value = a.COSTO_ACTIVIDAD || a.costo_actividad || "";
+        document.getElementById("moneda_actividad").value = a.MONEDA_ACTIVIDAD || a.moneda_actividad || "";
+        document.getElementById("id_cuenta_bco").value = a.ID_CUENTA_BCO || a.id_cuenta_bco || "";
+        document.getElementById("descrip_actividad").value = a.DESCRIP_ACTIVIDAD || a.descrip_actividad || "";
 
     } catch (error) {
         console.error("Error cargando actividad:", error);
@@ -353,7 +362,7 @@ async function actualizarActividad() {
         return;
     }
 
-    if (!actividad.nombre_actividad || !actividad.fec_actividad || !actividad.id_tipo_actividad) {
+    if (!actividad.nombre_actividad || !actividad.fecha_actividad || !actividad.id_tip_actividad) {
         alert("Debe completar al menos nombre, fecha y tipo de actividad.");
         return;
     }
@@ -365,7 +374,18 @@ async function actualizarActividad() {
             body: JSON.stringify(actividad)
         });
 
-        const data = await res.json();
+        const raw = await res.text();
+        console.log("PUT respuesta RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON al actualizar actividad:", e);
+            alert("Error en la respuesta del servidor al actualizar.");
+            return;
+        }
+
         alert(data.mensaje || "Actividad actualizada correctamente");
         cargarActividades();
         limpiarFormulario();
@@ -386,7 +406,18 @@ async function eliminarActividad(id) {
             body: JSON.stringify({ id_actividad: id })
         });
 
-        const data = await res.json();
+        const raw = await res.text();
+        console.log("DELETE respuesta RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON al eliminar actividad:", e);
+            alert("Error en la respuesta del servidor al eliminar.");
+            return;
+        }
+
         alert(data.mensaje || "Actividad eliminada correctamente");
         cargarActividades();
 
@@ -398,14 +429,17 @@ async function eliminarActividad(id) {
 
 function obtenerDatosFormulario() {
     return {
-        id_actividad:       document.getElementById("id_actividad").value,
-        nombre_actividad:   document.getElementById("nombre_actividad").value.trim(),
-        id_tipo_actividad:  document.getElementById("id_tipo_actividad").value,
-        fec_actividad:      document.getElementById("fec_actividad").value,
-        id_socio_resp:      document.getElementById("id_socio_responsable").value,
-        objetivo_actividad: document.getElementById("objetivo_actividad").value.trim(),
-        id_tip_pago:        document.getElementById("id_tip_pago") ? document.getElementById("id_tip_pago").value : "",
-        id_cuenta_bco:      document.getElementById("id_cuenta_bco") ? document.getElementById("id_cuenta_bco").value : ""
+        id_actividad: document.getElementById("id_actividad").value,
+        nombre_actividad: document.getElementById("nombre_actividad").value.trim(),
+        id_tip_actividad: document.getElementById("id_tipo_actividad").value,
+        fecha_actividad: document.getElementById("fec_actividad").value,
+        lugar_actividad: document.getElementById("lugar_actividad").value.trim(),
+        hora_actividad: document.getElementById("hora_actividad").value,
+        id_tip_pago: document.getElementById("id_tip_pago").value,
+        id_cuenta_bco: document.getElementById("id_cuenta_bco").value,
+        costo_actividad: document.getElementById("costo_actividad").value || 0,
+        moneda_actividad: document.getElementById("moneda_actividad").value,
+        descrip_actividad: document.getElementById("descrip_actividad").value.trim()
     };
 }
 

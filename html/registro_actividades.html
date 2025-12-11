@@ -117,6 +117,7 @@
                                 <input type="time" class="form-control" id="hora_actividad" name="hora_actividad">
                             </div>
 
+                            <!-- Dejamos el socio responsable SOLO visual, no se guarda porque no existe en la tabla -->
                             <div class="mb-3">
                                 <label for="id_socio_responsable" class="form-label">Socio responsable</label>
                                 <select class="form-select" id="id_socio_responsable" name="id_socio_responsable">
@@ -154,8 +155,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="objetivo_actividad" class="form-label">Objetivo / descripción</label>
-                                <textarea class="form-control" id="objetivo_actividad" name="objetivo_actividad"
+                                <label for="descrip_actividad" class="form-label">Descripción de la actividad</label>
+                                <textarea class="form-control" id="descrip_actividad" name="descrip_actividad"
                                     rows="3"></textarea>
                             </div>
 
@@ -184,8 +185,8 @@
                                         <th>Nombre</th>
                                         <th>Tipo</th>
                                         <th>Fecha</th>
-                                        <th>Socio resp.</th>
-                                        <th>Objetivo</th>
+                                        <th>Costo</th>
+                                        <th>Moneda</th>
                                         <th style="width:120px">Acciones</th>
                                     </tr>
                                 </thead>
