@@ -22,8 +22,6 @@
         <ul class="navbar-nav ms-auto d-flex flex-row gap-3 menu-principal">
           <li class="nav-item">
             <a class="nav-link" href="#">Configuración</a>
-
-
             <ul class="submenu">
               <li><a href="mantenimiento_provincias.html">Provincias</a></li>
               <li><a href="mantenimiento_cantones.html">Cantones</a></li>
@@ -56,7 +54,6 @@
             </ul>
           </li>
 
-
           <li class="nav-item">
             <a class="nav-link" href="login.html">Cerrar Sesión</a>
           </li>
@@ -66,68 +63,85 @@
 
     <section class="hero">
       <div class="container">
-        <h1 class="h2 mb-2 text-white">Mantenimiento de Tipo Pago/Cobro</h1>
-        <p class="lead mb-0 text-white">Registre nuevos tipos de pago para mantener una gestión financiera</p>
+        <h1 class="h2 mb-2 text-white">Mantenimiento de Tipos de Pago</h1>
+        <p class="lead mb-0 text-white">
+          Registre y administre los tipos de pago utilizados por el club.
+        </p>
       </div>
     </section>
   </header>
 
   <main class="container my-4">
     <div class="card p-4 shadow-sm">
-      <h2 class="h4 text-accent mb-3">Registrar Nuevo Tipo de Pago</h2>
+      <h2 class="h4 text-accent mb-3">Registrar / Editar Tipo de Pago</h2>
 
-      <form action="#" method="post">
+      <!-- FORMULARIO -->
+      <form id="form-tipo-pago" action="#" method="post">
+        <!-- ID oculto para edición -->
+        <input type="hidden" id="id_tipo" name="id_tipo">
+
         <div class="row g-3 align-items-end">
-
-          <div class="col-md-5">
-            <label for="nombre_tipo" class="form-label">Nombre del Tipo de Pago/Cobro</label>
-            <input type="text" class="form-control" id="nombre_tipo" name="nombre_tipo" required>
+          <!-- NOMBRE -->
+          <div class="col-md-4">
+            <label for="nombre_tipo" class="form-label">Nombre del Tipo de Pago</label>
+            <input type="text" class="form-control" id="nombre_tipo" name="nombre_tipo" maxlength="20" required
+              placeholder="Ej: Efectivo, SINPE, Tarjeta">
           </div>
 
-          <div class="col-md-7">
-            <label for="descripcion" class="form-label">Detalle/Instrucción Adicional (Opcional)</label>
-            <input type="text" class="form-control" id="descripcion" name="descripcion"
-              placeholder="Ej: Aplica comisión del 13% de IVA.">
+          <!-- PERIODICIDAD -->
+          <div class="col-md-2">
+            <label for="periodicidad" class="form-label">Periodicidad</label>
+            <select class="form-select" id="periodicidad" name="periodicidad" required>
+              <option value="M" selected>Mensual (M)</option>
+              <option value="T">Trimestral (T)</option>
+              <option value="D">Diaria (D)</option>
+            </select>
           </div>
 
-          <div class="col-12 text-end">
-            <button type="submit" class="btn btn-primary">Guardar Tipo de Pago</button>
+          <!-- TIPO -->
+          <div class="col-md-2">
+            <label for="tipo" class="form-label">Tipo</label>
+            <select class="form-select" id="tipo" name="tipo" required>
+              <option value="I" selected>Ingreso (I)</option>
+              <option value="E">Egreso (E)</option>
+            </select>
+          </div>
+
+          <!-- MONEDA -->
+          <div class="col-md-2">
+            <label for="moneda" class="form-label">Moneda</label>
+            <select class="form-select" id="moneda" name="moneda" required>
+              <option value="C" selected>Colones (C)</option>
+              <option value="D">Dólares (D)</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 text-end">
+            <button type="submit" class="btn btn-primary w-100">
+              Guardar
+            </button>
           </div>
         </div>
       </form>
 
       <hr class="my-4">
 
+      <!-- TABLA -->
       <h3 class="h5">Tipos de Pago Registrados</h3>
       <div class="table-responsive">
-        <table class="table table-striped table-hover small">
+        <table class="table table-striped table-hover small mb-0">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Tipo de Pago</th>
-              <th>Detalle/Instrucción</th>
-              <th>Acción</th>
+              <th>Nombre</th>
+              <th>Periodicidad</th>
+              <th>Tipo</th>
+              <th>Moneda</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Efectivo</td>
-              <td>Pago realizado de forma presencial.</td>
-              <td><a href="#">Editar</a></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Transferencia SINPE</td>
-              <td>Transferencia electrónica a cuentas bancarias del club.</td>
-              <td><a href="#">Editar</a></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Tarjeta</td>
-              <td>Transacciones mediante POS o pasarela de pagos.</td>
-              <td><a href="#">Editar</a></td>
-            </tr>
+            <!-- El cuerpo se llena dinámicamente desde mantenimiento_tipos_pago.js -->
           </tbody>
         </table>
       </div>
@@ -139,6 +153,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/mantenimiento_tipos_pago.js?v=1"></script>
 </body>
 
 </html>

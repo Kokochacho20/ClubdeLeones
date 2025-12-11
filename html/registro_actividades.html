@@ -108,9 +108,48 @@
                             </div>
 
                             <div class="mb-3">
+                                <label for="lugar_actividad" class="form-label">Lugar de la actividad</label>
+                                <input type="text" class="form-control" id="lugar_actividad" name="lugar_actividad">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="hora_actividad" class="form-label">Hora de la actividad</label>
+                                <input type="time" class="form-control" id="hora_actividad" name="hora_actividad">
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="id_socio_responsable" class="form-label">Socio responsable</label>
                                 <select class="form-select" id="id_socio_responsable" name="id_socio_responsable">
                                     <option value="">Seleccione un socio...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_tip_pago" class="form-label">Tipo de pago</label>
+                                <select class="form-select" id="id_tip_pago" name="id_tip_pago">
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_cuenta_bco" class="form-label">Cuenta bancaria</label>
+                                <select class="form-select" id="id_cuenta_bco" name="id_cuenta_bco">
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="costo_actividad" class="form-label">Costo de la actividad</label>
+                                <input type="number" class="form-control" id="costo_actividad" name="costo_actividad"
+                                    step="0.01" min="0">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="moneda_actividad" class="form-label">Moneda</label>
+                                <select class="form-select" id="moneda_actividad" name="moneda_actividad">
+                                    <option value="">Seleccione...</option>
+                                    <option value="C">Colones</option>
+                                    <option value="D">Dólares</option>
                                 </select>
                             </div>
 
