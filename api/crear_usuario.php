@@ -30,8 +30,8 @@ if ($nombre === '' || $correo === '' || $clave === '') {
 
 $hash = password_hash($clave, PASSWORD_DEFAULT);
 
-$usuario_db   = 'ADMJDRU';
-$password_db  = 'ADMJDRU';
+$usuario_db   = 'ADMLEON';
+$password_db  = 'ADMLEON';
 $cadena       = 'localhost/XE';
 
 $conn = oci_connect($usuario_db, $password_db, $cadena, 'AL32UTF8');

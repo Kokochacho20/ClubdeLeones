@@ -27,8 +27,8 @@ if ($correo === '' || $nuevaClave === '') {
 
 $hash = password_hash($nuevaClave, PASSWORD_DEFAULT);
 
-$usuario_db   = 'ADMJDRU';
-$password_db  = 'ADMJDRU';
+$usuario_db   = 'ADMLEON';
+$password_db  = 'ADMLEON';
 $cadena       = 'localhost/XE';
 
 $conn = oci_connect($usuario_db, $password_db, $cadena, 'AL32UTF8');
