@@ -149,9 +149,9 @@ async function guardarCuenta(e) {
     }
 }
 
-// Editar + Eliminar
+// Editar/Eliminar
 function asignarEventosAcciones() {
-    // EDITAR
+
     const botonesEditar = document.querySelectorAll('.btn-editar');
     botonesEditar.forEach(btn => {
         btn.addEventListener('click', () => {

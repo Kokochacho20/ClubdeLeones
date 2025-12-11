@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
         guardarCanton();
     });
 
-    // Función para cargar las provincias en el select
+    // cargar provincias 
     async function cargarProvincias() {
         try {
             const response = await fetch(`${API_BASE}/provincias.php`);
@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             selectProvincia.innerHTML = '<option value="" selected disabled>Seleccione una provincia...</option>';
 
-            // Llenar select provincias
             provincias.forEach(provincia => {
                 const option = document.createElement('option');
                 option.value = provincia.COD_PROVINCIA;
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Función para cargar los cantones
+    //cargarcantones
     async function cargarCantones() {
         try {
             const response = await fetch(`${API_BASE}/cantones.php`);
@@ -56,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Función para mostrar los cantones en la tabla
+    // mostrar cantones
     function mostrarCantones(cantones) {
         tbodyCantones.innerHTML = '';
         cantones.forEach(canton => {
@@ -74,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Función para guardar un nuevo canton o actualizar uno existente
+    //guardar canton o actualizar 
     async function guardarCanton() {
         const codCanton = document.getElementById('cod_canton').value;
         const nombreCanton = document.getElementById('nombre_canton').value.trim();

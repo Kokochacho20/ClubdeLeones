@@ -38,7 +38,7 @@ if ($method === 'POST') {
     $cod_provincia = $data['cod_provincia'] ?? null;
     $nombre        = $data['nombre_provincia'] ?? null;
 
-    //insertar provincia
+    // insertar provincia
     if ($accion === 'crear') {
 
         if (!$nombre) {
@@ -47,7 +47,7 @@ if ($method === 'POST') {
             exit;
         }
 
-        $sql = "BEGIN insertar_provincia(:p_nombre_provincia); END;";
+        $sql = "BEGIN insertar_provincia_regex(:p_nombre_provincia); END;";
 
         $stid = oci_parse($conn, $sql);
         oci_bind_by_name($stid, ":p_nombre_provincia", $nombre);
@@ -55,12 +55,19 @@ if ($method === 'POST') {
         if (!oci_execute($stid)) {
             $e = oci_error($stid);
             http_response_code(400);
-            echo json_encode(["ok" => false, "mensaje" => $e['message']]);
+            echo json_encode([
+                "ok"      => false,
+                "mensaje" => $e['message']
+            ]);
         } else {
-            echo json_encode(["ok" => true, "mensaje" => "Provincia agregada correctamente"]);
+            echo json_encode([
+                "ok"      => true,
+                "mensaje" => "Provincia agregada correctamente"
+            ]);
         }
         exit;
     }
+
 
     //actualizar 
     if ($accion === 'actualizar') {

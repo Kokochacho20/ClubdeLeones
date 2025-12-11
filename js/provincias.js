@@ -15,7 +15,7 @@ formProvincia.addEventListener('submit', async function (e) {
         alert('Complete el nombre de la provincia');
         return;
     }
-
+ 
     const payload = cod_provincia
         ? {
             accion: 'actualizar',

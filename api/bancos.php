@@ -44,6 +44,7 @@ if ($method === 'POST') {
     $contacto_banco1 = $data['contacto_banco1'] ?? null;
     $contacto_banco2 = $data['contacto_banco2'] ?? null;
 
+
     // INSERTAR BANCO
     if ($accion === 'crear') {
 
@@ -56,30 +57,38 @@ if ($method === 'POST') {
             exit;
         }
 
-        $sql = "BEGIN insertar_banco(
-                    :p_nombre_banco,
-                    :p_tel_banco1,
-                    :p_tel_banco2,
-                    :p_contacto_banco1,
-                    :p_contacto_banco2
-                ); END;";
+
+        $sql = "BEGIN insertar_banco_regex(
+                :p_nombre_banco,
+                :p_tel_banco1,
+                :p_tel_banco2,
+                :p_contacto_banco1,
+                :p_contacto_banco2
+            ); END;";
 
         $stid = oci_parse($conn, $sql);
-        oci_bind_by_name($stid, ":p_nombre_banco", $nombre_banco);
-        oci_bind_by_name($stid, ":p_tel_banco1", $tel_banco1);
-        oci_bind_by_name($stid, ":p_tel_banco2", $tel_banco2);
+        oci_bind_by_name($stid, ":p_nombre_banco",    $nombre_banco);
+        oci_bind_by_name($stid, ":p_tel_banco1",      $tel_banco1);
+        oci_bind_by_name($stid, ":p_tel_banco2",      $tel_banco2);
         oci_bind_by_name($stid, ":p_contacto_banco1", $contacto_banco1);
         oci_bind_by_name($stid, ":p_contacto_banco2", $contacto_banco2);
 
-        if (!oci_execute($stid)) {
+        if (!@oci_execute($stid)) {
             $e = oci_error($stid);
             http_response_code(400);
-            echo json_encode(["ok" => false, "mensaje" => $e['message']]);
+            echo json_encode([
+                "ok"      => false,
+                "mensaje" => $e['message']
+            ]);
         } else {
-            echo json_encode(["ok" => true, "mensaje" => "Banco agregado correctamente"]);
+            echo json_encode([
+                "ok"      => true,
+                "mensaje" => "Banco agregado correctamente"
+            ]);
         }
         exit;
     }
+
 
     // ACTUALIZAR BANCO
     if ($accion === 'actualizar') {

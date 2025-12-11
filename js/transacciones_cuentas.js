@@ -15,6 +15,7 @@ const inputId = document.getElementById('id_transac_cta');
 let modoEdicion = false;
 let cacheTransacciones = [];
 
+
 async function cargarSelects() {
   try {
     const res = await fetch(`${API_BASE}/cuentas_bancarias.php`);
@@ -40,12 +41,14 @@ async function cargarSelects() {
 
   } catch (err) {
     console.error(err);
-    alert('Error al cargar datos');
+    alert('Error al cargar datos de cuentas');
   }
 }
 
+// LISTAR TRANSACCIONES 
 async function cargarTransacciones() {
   try {
+
     const res = await fetch(`${API_BASE}/transacciones_cuentas.php`);
     if (!res.ok) throw new Error('Error al cargar transacciones');
     const transacciones = await res.json();
@@ -86,6 +89,7 @@ async function cargarTransacciones() {
     alert('No se pudieron cargar las transacciones');
   }
 }
+
 
 async function obtenerUltimoTipoCambio() {
   const resTC = await fetch(`${API_BASE}/tipo_cambio.php`);
@@ -145,6 +149,7 @@ function leerFormulario() {
   };
 }
 
+// CREAR 
 async function crearTransaccion(e) {
   e.preventDefault();
 
@@ -158,16 +163,27 @@ async function crearTransaccion(e) {
       id_tip_cambio
     };
 
+    const formData = new FormData();
+    Object.entries(payload).forEach(([k, v]) => {
+      if (v !== null && v !== undefined) {
+        formData.append(k, v);
+      }
+    });
+
     const res = await fetch(`${API_BASE}/transacciones_cuentas.php`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: formData
     });
 
     const raw = await res.text();
     console.log("POST crear RAW:", raw);
 
-    const respuesta = JSON.parse(raw);
+    let respuesta;
+    try {
+      respuesta = JSON.parse(raw);
+    } catch (e) {
+      throw new Error("Respuesta inválida del servidor al crear");
+    }
 
     if (!res.ok || respuesta.ok === false) {
       throw new Error(respuesta.mensaje || "Error al crear transacción");
@@ -206,16 +222,27 @@ async function actualizarTransaccion(e) {
       id_tip_cambio
     };
 
+    const formData = new FormData();
+    Object.entries(payload).forEach(([k, v]) => {
+      if (v !== null && v !== undefined) {
+        formData.append(k, v);
+      }
+    });
+
     const res = await fetch(`${API_BASE}/transacciones_cuentas.php`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: formData
     });
 
     const raw = await res.text();
     console.log("POST actualizar RAW:", raw);
 
-    const respuesta = JSON.parse(raw);
+    let respuesta;
+    try {
+      respuesta = JSON.parse(raw);
+    } catch (e) {
+      throw new Error("Respuesta inválida del servidor al actualizar");
+    }
 
     if (!res.ok || respuesta.ok === false) {
       throw new Error(respuesta.mensaje || "Error al actualizar transacción");
@@ -234,6 +261,7 @@ async function actualizarTransaccion(e) {
   }
 }
 
+
 function manejarSubmit(e) {
   if (modoEdicion) {
     actualizarTransaccion(e);
@@ -242,6 +270,7 @@ function manejarSubmit(e) {
   }
 }
 
+//EDITAR
 window.editarTransaccion = function (id) {
   const t = cacheTransacciones.find(x => (x.ID_TRANSAC_CTA || x.id_transac_cta) == id);
   if (!t) {
@@ -263,8 +292,9 @@ window.editarTransaccion = function (id) {
 
   modoEdicion = true;
   btnSubmit.textContent = 'Actualizar Transacción';
-}
+};
 
+//ELIMINAR
 window.eliminarTransaccion = async function (id) {
   if (!confirm("¿Seguro que desea eliminar esta transacción?")) return;
 
@@ -274,16 +304,27 @@ window.eliminarTransaccion = async function (id) {
       id_transac_cta: id
     };
 
+    const formData = new FormData();
+    Object.entries(payload).forEach(([k, v]) => {
+      if (v !== null && v !== undefined) {
+        formData.append(k, v);
+      }
+    });
+
     const res = await fetch(`${API_BASE}/transacciones_cuentas.php`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: formData
     });
 
     const raw = await res.text();
     console.log("POST eliminar RAW:", raw);
 
-    const respuesta = JSON.parse(raw);
+    let respuesta;
+    try {
+      respuesta = JSON.parse(raw);
+    } catch (e) {
+      throw new Error("Respuesta inválida del servidor al eliminar");
+    }
 
     if (!res.ok || respuesta.ok === false) {
       throw new Error(respuesta.mensaje || "Error al eliminar transacción");

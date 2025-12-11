@@ -33,9 +33,8 @@ body {
 }
 
 .container {
-  color: var(--tinta);
+  color: white;
 }
-
 
 .aside-logo img {
   max-width: 70%;
@@ -176,7 +175,7 @@ footer {
   top: 100%;
   left: 0;
   background-color: var(--azul-osc);
-  min-width: 280px;
+  min-width: 180px;
   z-index: 1000;
   display: none;
 }
@@ -185,7 +184,7 @@ footer {
 .submenu a {
   padding: 10px 20px;
   color: var(--blanco);
-  font-weight: normal;
+  font-size: 1rem;
 }
 
 .submenu a:hover {
@@ -239,7 +238,8 @@ footer {
 }
 
 .aside-logo .d-grid {
-  margin-top: 0.3rem; /* reduce espacio encima de los botones */
+  margin-top: 0.3rem;
+  /* reduce espacio encima de los botones */
 }
 
 /* Márgenes del título y la lista que separan del logo */
@@ -252,7 +252,8 @@ footer {
 .aside-logo ul {
   margin-top: 0;
   margin-bottom: 0.3rem;
-  padding-left: 1rem; /* Sangría */
+  padding-left: 1rem;
+  /* Sangría */
 }
 
 /* Línea separadora */
@@ -264,7 +265,8 @@ footer {
 /* Reducir espacio encima de los botones y eliminar espacio en blanco grande */
 .aside-logo .d-grid {
   margin-top: 0.25rem;
-  gap: 0.35rem;          /* controla el espacio vertical entre los dos botones */
+  gap: 0.35rem;
+  /* controla el espacio vertical entre los dos botones */
 }
 
 /* Asegurar botones compactos */
@@ -273,16 +275,19 @@ footer {
   font-size: 0.95rem;
   border-radius: 8px;
 }
+
 /* --- Encabezado uniforme entre páginas --- */
 header .navbar {
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
-  background: var(--color-azul); /* confirmar color uniforme */
+  background: var(--color-azul);
+  /* confirmar color uniforme */
 }
 
 /* Misma altura del logo */
 header .navbar-brand img {
-  height: 80px;    /* cambia aquí si quieres 64px / 72px */
+  height: 80px;
+  /* cambia aquí si quieres 64px / 72px */
   width: auto;
   display: block;
 }

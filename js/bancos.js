@@ -65,23 +65,19 @@ function validarTelefonoSimple(valor, { obligatorio = false, etiqueta = 'Teléfo
             alert(`${etiqueta} es obligatorio`);
             return false;
         }
-        // No obligatorio y vacío → OK
         return true;
     }
 
-    // Solo dígitos
     if (!/^[0-9]+$/.test(tel)) {
         alert(`${etiqueta} solo puede contener números (no se permiten letras ni símbolos)`);
         return false;
     }
 
-    // Mínimo 8 dígitos
     if (tel.length < 8) {
         alert(`${etiqueta} debe tener al menos 8 dígitos`);
         return false;
     }
 
-    // Máximo 10 para que quepa en NUMBER(10)
     if (tel.length > 10) {
         alert(`${etiqueta} no puede tener más de 10 dígitos`);
         return false;
@@ -166,9 +162,9 @@ async function guardarBanco(e) {
 
 
 
-// EDITAR + ELIMINAR
+// EDITAR / ELIMINAR
 function asignarEventosAcciones() {
-    // EDITAR
+
     const botonesEditar = document.querySelectorAll('.btn-editar');
     botonesEditar.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -192,7 +188,6 @@ function asignarEventosAcciones() {
         });
     });
 
-    // ELIMINAR
     const botonesEliminar = document.querySelectorAll('.btn-eliminar');
     botonesEliminar.forEach(btn => {
         btn.addEventListener('click', async () => {

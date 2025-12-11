@@ -13,10 +13,8 @@ $id     = isset($_GET['id']) ? $_GET['id'] : null;
 $data = json_decode(file_get_contents('php://input'), true);
 if (!is_array($data)) $data = [];
 
-/* ------------------ GET ------------------ */
 if ($method === 'GET') {
 
-  // detalle
   if ($id) {
     $sql = "SELECT 
               id_socio,
@@ -53,7 +51,7 @@ if ($method === 'GET') {
     echo json_encode($row);
     exit;
   }
-
+ 
   // listado
   $sql = "SELECT 
             s.id_socio,
@@ -94,7 +92,6 @@ if ($method === 'GET') {
   exit;
 }
 
-/* ------------------ POST (insertar_socio) ------------------ */
 if ($method === 'POST') {
 
   $nombre_socio     = trim($data['nombre_socio']     ?? '');
@@ -159,7 +156,6 @@ if ($method === 'POST') {
   exit;
 }
 
-/* ------------------ PUT (actualizar_socio) ------------------ */
 if ($method === 'PUT') {
 
   if (!$id) {
@@ -232,7 +228,6 @@ if ($method === 'PUT') {
   exit;
 }
 
-/* ------------------ DELETE (eliminar_socio) ------------------ */
 if ($method === 'DELETE') {
 
   if (!$id) {
@@ -256,7 +251,6 @@ if ($method === 'DELETE') {
   exit;
 }
 
-/* metodo no permitido */
 http_response_code(405);
 echo json_encode(['ok' => false, 'error' => 'Metodo no permitido']);
 

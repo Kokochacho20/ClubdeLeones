@@ -22,8 +22,6 @@
         <ul class="navbar-nav ms-auto d-flex flex-row gap-3 menu-principal">
           <li class="nav-item">
             <a class="nav-link" href="#">Configuración</a>
-
-
             <ul class="submenu">
               <li><a href="mantenimiento_provincias.html">Provincias</a></li>
               <li><a href="mantenimiento_cantones.html">Cantones</a></li>
@@ -34,7 +32,6 @@
               <li><a href="cuentas_bancarias.html">Cuentas Bancarias</a></li>
               <li><a href="mantenimiento_tipos_pago.html">Tipos de Pago</a></li>
               <li><a href="tipo_cambio.html">Tipos de Cambio</a></li>
-
             </ul>
           </li>
 
@@ -58,7 +55,6 @@
             </ul>
           </li>
 
-
           <li class="nav-item">
             <a class="nav-link" href="login.html">Cerrar Sesión</a>
           </li>
@@ -78,16 +74,13 @@
     <div class="card p-4 shadow-sm">
       <h2 class="h4 text-accent mb-3">Filtros de Análisis Financiero</h2>
 
-      <form action="#" method="get">
+      <form id="form-reporte-ingresos-egresos" action="#" method="get">
         <div class="row g-3">
 
           <div class="col-md-5">
-            <label for="id_actividad_filtro" class="form-label">Actividad</label>
-            <select class="form-select" id="id_actividad_filtro" name="id_actividad_filtro" required>
+            <label for="id_actividad" class="form-label">Actividad</label>
+            <select class="form-select" id="id_actividad" name="id_actividad" required>
               <option value="">Seleccione una Actividad</option>
-              <option value="1">Jornada de Salud Visual</option>
-              <option value="2">Recolección de Suministros Escolares</option>
-              <option value="3">Reunión Interna del Club</option>
             </select>
           </div>
 
@@ -102,8 +95,8 @@
           </div>
 
           <div class="col-md-4">
-            <label for="tipo_transac_filtro" class="form-label">Tipo de Transacción</label>
-            <select class="form-select" id="tipo_transac_filtro" name="tipo_transac_filtro">
+            <label for="tipo" class="form-label">Tipo de Transacción</label>
+            <select class="form-select" id="tipo" name="tipo">
               <option value="">Ingresos y Egresos</option>
               <option value="I">Solo Ingresos</option>
               <option value="E">Solo Egresos</option>
@@ -114,13 +107,18 @@
 
         <div class="d-flex gap-2 mt-4">
           <button type="submit" class="btn btn-primary">Generar Reporte Financiero</button>
-          <button type="button" class="btn btn-outline-secondary">Limpiar Filtros</button>
+          <button type="button" id="btn-limpiar" class="btn btn-outline-secondary">Limpiar Filtros</button>
         </div>
       </form>
 
       <hr class="my-4">
 
-      <h3 class="h5">Detalle de Transacciones (Jornada de Salud Visual)</h3>
+      <h3 class="h5">
+        Detalle de Transacciones
+        <small class="text-muted">
+          <span id="actividad-seleccionada"></span>
+        </small>
+      </h3>
       <div class="alert alert-info">
         El reporte muestra todas las transacciones asociadas a la actividad seleccionada en el período.
       </div>
@@ -129,41 +127,46 @@
         <table class="table table-bordered table-sm small">
           <thead class="table-light">
             <tr>
+              <th># Transacción</th>
               <th>Fecha</th>
               <th>Tipo</th>
-              <th>Monto (₡)</th>
-              <th>Concepto</th>
+              <th>Tipo de Pago</th>
+              <th class="text-end">Monto (₡)</th>
               <th>Socio Participante</th>
             </tr>
           </thead>
-          <tbody>
+
+
+          <tbody id="tbody-reporte">
             <tr>
-              <td>2025-05-10</td>
-              <td class="text-success">Ingreso</td>
-              <td>50,000.00</td>
-              <td>Donación en efectivo de la Panadería X</td>
-              <td>Jean Paul Segura</td>
-            </tr>
-            <tr>
-              <td>2025-05-08</td>
-              <td class="text-danger">Egreso</td>
-              <td>-12,500.00</td>
-              <td>Compra de insumos de primeros auxilios</td>
-              <td>Franciny Arias</td>
-            </tr>
-            <tr>
-              <td colspan="2" class="fw-bold text-end">TOTAL INGRESOS:</td>
-              <td colspan="3" class="fw-bold text-success">₡50,000.00</td>
-            </tr>
-            <tr>
-              <td colspan="2" class="fw-bold text-end">TOTAL EGRESOS:</td>
-              <td colspan="3" class="fw-bold text-danger">₡12,500.00</td>
-            </tr>
-            <tr>
-              <td colspan="2" class="fw-bold text-end">BALANCE FINAL:</td>
-              <td colspan="3" class="fw-bold text-primary">₡37,500.00</td>
+              <td colspan="6" class="text-center">
+                Use los filtros superiores y presione "Generar Reporte Financiero".
+              </td>
             </tr>
           </tbody>
+
+
+          <tfoot>
+            <tr>
+              <td colspan="4" class="fw-bold text-end">TOTAL INGRESOS:</td>
+              <td colspan="2" class="fw-bold text-success">
+                ₡<span id="total-ingresos">0.00</span>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4" class="fw-bold text-end">TOTAL EGRESOS:</td>
+              <td colspan="2" class="fw-bold text-danger">
+                ₡<span id="total-egresos">0.00</span>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4" class="fw-bold text-end">BALANCE FINAL:</td>
+              <td colspan="2" class="fw-bold text-primary">
+                ₡<span id="balance-final">0.00</span>
+              </td>
+            </tr>
+          </tfoot>
+
         </table>
       </div>
     </div>
@@ -172,7 +175,9 @@
   <footer class="text-center">
     <div class="container"><small>&copy; Club de Leones de Tibás — 2025</small></div>
   </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/reporte_ingresos_egresos.js"></script>
 </body>
 
 </html>

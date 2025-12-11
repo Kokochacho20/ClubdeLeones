@@ -10,7 +10,7 @@ $conn   = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    // LISTAR Cuentas Bancarias
+    // LISTAR Cuentas
     $sql = "SELECT c.id_cuenta_bco,
                    c.nombre_cuenta_bco,
                    c.id_banco,
@@ -36,7 +36,7 @@ if ($method === 'GET') {
 
     $cuentas = [];
     while ($row = oci_fetch_assoc($stid)) {
-        $cuentas[] = $row; // claves en MAYÚSCULA
+        $cuentas[] = $row;
     }
 
     echo json_encode($cuentas);
@@ -54,11 +54,9 @@ if ($method === 'POST') {
     $fec_corte = $data['fec_corte'] ?? null;
     $saldo_corte = $data['saldo_corte'] ?? null;
 
-    // Normalizar vacíos
     if ($fec_corte === '')  $fec_corte  = null;
     if ($saldo_corte === '') $saldo_corte = null;
 
-    // INSERTAR
     if ($accion === 'crear') {
 
         if (!$nombre_cuenta_bco || !$id_banco || !$moneda_cuenta_bco) {
@@ -190,7 +188,6 @@ if ($method === 'POST') {
         exit;
     }
 
-    // ACCIÓN NO RECONOCIDA
     http_response_code(400);
     echo json_encode(["ok" => false, "mensaje" => "Acción no reconocida"]);
     exit;

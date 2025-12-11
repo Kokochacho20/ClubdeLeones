@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let socios = [];
 
-    // helper json seguro
     async function leerJSON(res, ctx) {
         const txt = await res.text();
         if (txt === '') return null;
@@ -276,7 +275,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // globales
     window.editarSocio = async function (id) {
         try {
             const res = await fetch(`${API_BASE}/socios.php?id=${id}`);

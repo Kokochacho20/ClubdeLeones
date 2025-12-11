@@ -2,15 +2,15 @@ const API_LOGIN = '../api/login.php';
 const API_RESET = '../api/cambiar_password.php';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const form   = document.getElementById('loginForm');
+  const form = document.getElementById('loginForm');
   const toggle = document.getElementById('togglePassword');
-  const pwd    = document.getElementById('password');
-  const user   = document.getElementById('username');
+  const pwd = document.getElementById('password');
+  const user = document.getElementById('username');
 
-  const forgotLink   = document.getElementById('forgotPasswordLink');
-  const resetForm    = document.getElementById('resetPasswordForm');
+  const forgotLink = document.getElementById('forgotPasswordLink');
+  const resetForm = document.getElementById('resetPasswordForm');
   const resetModalEl = document.getElementById('resetPasswordModal');
-  const resetModal   = resetModalEl ? new bootstrap.Modal(resetModalEl) : null;
+  const resetModal = resetModalEl ? new bootstrap.Modal(resetModalEl) : null;
 
   // Ver / ocultar contraseña
   if (toggle && pwd) {
@@ -28,11 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Login
+  // Login
   if (form && user && pwd) {
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
 
-      const usuario  = user.value.trim();
+      const usuario = user.value.trim();
       const password = pwd.value.trim();
 
       if (!usuario || !password) {
@@ -47,7 +48,29 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ usuario, password })
         });
 
-        const data = await res.json();
+        const texto = await res.text();
+        console.log('Respuesta login.php =>', texto);
+
+        const trimmed = texto.trim();
+
+        if (!trimmed) {
+          alert('El servidor devolvió una respuesta vacía.');
+          return;
+        }
+
+        if (trimmed[0] !== '{' && trimmed[0] !== '[') {
+          alert('Respuesta no JSON del servidor:\n\n' + trimmed);
+          return;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(trimmed);
+        } catch (e) {
+          console.error('No es JSON válido', e);
+          alert('Respuesta inválida del servidor (JSON mal formado).');
+          return;
+        }
 
         if (data.ok) {
           sessionStorage.setItem('usuario', data.usuario || usuario);
@@ -56,10 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
           alert(data.mensaje || 'Usuario o contraseña incorrectos');
         }
       } catch (err) {
+        console.error('Error en fetch:', err);
         alert('No se pudo validar el usuario en este momento');
       }
     });
   }
+
+
+
 
   // Olvidé contraseña -> abrir modal
   if (forgotLink && resetModal) {

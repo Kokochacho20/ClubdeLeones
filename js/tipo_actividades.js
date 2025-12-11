@@ -1,4 +1,4 @@
-const API_BASE = './api'; // Ajustar si los HTML tienen su propia carpeta
+const API_BASE = './api'; 
 
 const formTipoActividad = document.getElementById('form-tipo-actividad');
 const tbodyTiposActividad = document.getElementById('tbody-tipo-actividad');

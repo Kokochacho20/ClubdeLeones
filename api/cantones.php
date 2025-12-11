@@ -62,27 +62,44 @@ switch ($method) {
         break;
 
     case 'POST':
-        //crar canton
-        if (!empty($data['nombre_canton']) && !empty($data['cod_provincia'])) {
+        // crar canton
+        $nombre_canton = trim($data['nombre_canton'] ?? '');
+        $cod_provincia = $data['cod_provincia'] ?? null;
 
-            $sql = "BEGIN insertar_canton(:p_cod_provincia, :p_nombre_canton); END;";
+        if ($nombre_canton !== '' && !empty($cod_provincia)) {
+
+            $sql = "BEGIN insertar_canton_regex(
+                    :p_cod_provincia,
+                    :p_nombre_canton
+                ); END;";
+
             $stid = oci_parse($conn, $sql);
 
-            oci_bind_by_name($stid, ':p_cod_provincia', $data['cod_provincia']);
-            oci_bind_by_name($stid, ':p_nombre_canton', $data['nombre_canton']);
+            oci_bind_by_name($stid, ':p_cod_provincia', $cod_provincia);
+            oci_bind_by_name($stid, ':p_nombre_canton', $nombre_canton);
 
-            if (!oci_execute($stid)) {
+            if (!@oci_execute($stid)) {
                 $e = oci_error($stid);
                 http_response_code(400);
-                echo json_encode(['error' => $e['message']]);
+                echo json_encode([
+                    'ok'      => false,
+                    'error'   => $e['message']
+                ]);
             } else {
-                echo json_encode(['mensaje' => 'Cantón creado correctamente']);
+                echo json_encode([
+                    'ok'      => true,
+                    'mensaje' => 'Canton creado correctamente'
+                ]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(['error' => 'El nombre del cantón y la provincia son requeridos']);
+            echo json_encode([
+                'ok'    => false,
+                'error' => 'El nombre del canton y la provincia son requeridos'
+            ]);
         }
         break;
+
 
     case 'PUT':
         // Actualizar canton

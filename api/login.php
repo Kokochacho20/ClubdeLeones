@@ -6,19 +6,22 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
+    echo json_encode(['ok' => true]);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
     echo json_encode(['ok' => false, 'mensaje' => 'Método no permitido']);
     exit;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-$usuario = isset($input['usuario']) ? trim($input['usuario']) : '';
+
+$usuario  = isset($input['usuario']) ? trim($input['usuario']) : '';
 $password = isset($input['password']) ? trim($input['password']) : '';
 
 if ($usuario === '' || $password === '') {
@@ -26,10 +29,12 @@ if ($usuario === '' || $password === '') {
     exit;
 }
 
-require_once 'db.php';
+require_once __DIR__ . '/db.php';
+
+
+$conn = getConnection();
 
 if (!$conn) {
-    http_response_code(500);
     echo json_encode(['ok' => false, 'mensaje' => 'Error de conexión con la base de datos']);
     exit;
 }
@@ -44,8 +49,20 @@ $sql = "SELECT id_usuario,
         WHERE  correo_usuario = :correo";
 
 $stmt = oci_parse($conn, $sql);
+if (!$stmt) {
+    $e = oci_error($conn);
+    echo json_encode(['ok' => false, 'mensaje' => 'Error al preparar la consulta: ' . $e['message']]);
+    exit;
+}
+
 oci_bind_by_name($stmt, ':correo', $usuario);
-oci_execute($stmt);
+
+$ok = oci_execute($stmt);
+if (!$ok) {
+    $e = oci_error($stmt);
+    echo json_encode(['ok' => false, 'mensaje' => 'Error al consultar usuario: ' . $e['message']]);
+    exit;
+}
 
 $row = oci_fetch_assoc($stmt);
 
@@ -59,7 +76,12 @@ if ($row['ESTADO_USUARIO'] !== 'A') {
     exit;
 }
 
-$hash = $row['CLAVE_USUARIO'];
+$hash = $row['CLAVE_USUARIO'] ?? '';
+
+if (!is_string($hash) || $hash === '') {
+    echo json_encode(['ok' => false, 'mensaje' => 'Configuración inválida de la contraseña del usuario']);
+    exit;
+}
 
 if (!password_verify($password, $hash)) {
     echo json_encode(['ok' => false, 'mensaje' => 'Usuario o contraseña inválidos']);
@@ -77,3 +99,4 @@ echo json_encode([
     'correo'  => $row['CORREO_USUARIO'],
     'rol'     => $row['ROL_USUARIO']
 ]);
+exit;

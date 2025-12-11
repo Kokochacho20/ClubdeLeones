@@ -4,12 +4,19 @@ require_once 'db.php';
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-$conn = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 
+if ($method === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+$conn = getConnection();
+
 if ($method === 'GET') {
+    // LISTAR TRANSACCIONES
     $sql = "SELECT 
                 id_transac_cta,
                 tipo_transac_cta,
@@ -24,33 +31,48 @@ if ($method === 'GET') {
                 TO_CHAR(fec_concilia, 'YYYY-MM-DD') AS fec_concilia
             FROM transac_cta
             ORDER BY id_transac_cta";
+
     $stid = oci_parse($conn, $sql);
-    oci_execute($stid);
+
+    if (!oci_execute($stid)) {
+        $e = oci_error($stid);
+        http_response_code(500);
+        echo json_encode(["ok" => false, "mensaje" => $e['message']]);
+        exit;
+    }
 
     $transacciones = [];
     while ($row = oci_fetch_assoc($stid)) {
         $transacciones[] = $row;
     }
+
     echo json_encode($transacciones);
     exit;
 }
 
 if ($method === 'POST') {
-    $data = json_decode(file_get_contents("php://input"), true);
-    $accion = $data['accion'] ?? '';
+    $accion = $_POST['accion'] ?? '';
 
-    $id_transac_cta       = $data['id_transac_cta'] ?? null;
-    $tipo_transac_cta     = $data['tipo_transac_cta'] ?? 'D';
-    $id_cuenta_bco_origen = $data['id_cuenta_bco_origen'] ?? null;
-    $id_cuenta_bco_destino= $data['id_cuenta_bco_destino'] ?? null;
-    $moneda_transac_cta   = $data['moneda_transac_cta'] ?? 'C';
-    $monto_colones        = $data['monto_colones'] ?? null;
-    $monto_dolares        = $data['monto_dolares'] ?? null;
-    $id_tip_cambio        = $data['id_tip_cambio'] ?? null;
-    $fec_transac_cta      = $data['fec_transac_cta'] ?? null;
-    $conciliada           = $data['conciliada'] ?? 'N';
-    $fec_concilia         = $data['fec_concilia'] ?? null;
+    $id_transac_cta = $_POST['id_transac_cta'] ?? null;
+    $tipo_transac_cta = $_POST['tipo_transac_cta'] ?? 'D';
+    $id_cuenta_bco_origen  = $_POST['id_cuenta_bco_origen'] ?? null;
+    $id_cuenta_bco_destino = $_POST['id_cuenta_bco_destino'] ?? null;
+    $moneda_transac_cta = $_POST['moneda_transac_cta'] ?? 'C';
+    $monto_colones = $_POST['monto_colones'] ?? null;
+    $monto_dolares = $_POST['monto_dolares'] ?? null;
+    $id_tip_cambio = $_POST['id_tip_cambio'] ?? null;
 
+    $fec_transac_cta = isset($_POST['fec_transac_cta']) && $_POST['fec_transac_cta'] !== ''
+        ? $_POST['fec_transac_cta']
+        : null;
+
+    $conciliada = $_POST['conciliada'] ?? 'N';
+
+    $fec_concilia = isset($_POST['fec_concilia']) && $_POST['fec_concilia'] !== ''
+        ? $_POST['fec_concilia']
+        : null;
+
+    // CREAR
     if ($accion === 'crear') {
         $sql = "BEGIN insertar_transac_cta(
                     :p_tipo_transac_cta,
@@ -64,7 +86,9 @@ if ($method === 'POST') {
                     :p_conciliada,
                     TO_DATE(:p_fec_concilia, 'YYYY-MM-DD')
                 ); END;";
+
         $stid = oci_parse($conn, $sql);
+
         oci_bind_by_name($stid, ":p_tipo_transac_cta", $tipo_transac_cta);
         oci_bind_by_name($stid, ":p_id_cuenta_bco_origen", $id_cuenta_bco_origen);
         oci_bind_by_name($stid, ":p_id_cuenta_bco_destino", $id_cuenta_bco_destino);
@@ -86,6 +110,7 @@ if ($method === 'POST') {
         exit;
     }
 
+    //ACTUALIZAR 
     if ($accion === 'actualizar') {
         if (!$id_transac_cta) {
             http_response_code(400);
@@ -106,7 +131,9 @@ if ($method === 'POST') {
                     :p_conciliada,
                     TO_DATE(:p_fec_concilia, 'YYYY-MM-DD')
                 ); END;";
+
         $stid = oci_parse($conn, $sql);
+
         oci_bind_by_name($stid, ":p_id_transac_cta", $id_transac_cta);
         oci_bind_by_name($stid, ":p_tipo_transac_cta", $tipo_transac_cta);
         oci_bind_by_name($stid, ":p_id_cuenta_bco_origen", $id_cuenta_bco_origen);
@@ -129,6 +156,7 @@ if ($method === 'POST') {
         exit;
     }
 
+    // ELIMINAR 
     if ($accion === 'eliminar') {
         if (!$id_transac_cta) {
             http_response_code(400);

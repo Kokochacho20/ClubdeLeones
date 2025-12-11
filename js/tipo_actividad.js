@@ -56,7 +56,7 @@ async function cargarTiposActividad() {
     }
 }
 
-// CREAR / ACTUALIZAR tipo de actividad
+// CREAR / ACTUALIZAR
 async function guardarTipoActividad(e) {
     e.preventDefault();
 
@@ -108,7 +108,6 @@ async function guardarTipoActividad(e) {
                 : 'Tipo de actividad creado correctamente')
         );
 
-        // Reset form
         formTipoActividad.reset();
         inputId.value = '';
         botonGuardar.textContent = 'Guardar Tipo de Actividad';
@@ -124,7 +123,6 @@ formTipoActividad.addEventListener('submit', guardarTipoActividad);
 
 // EDITAR + ELIMINAR
 function asignarEventosAcciones() {
-    // EDITAR
     const botonesEditar = document.querySelectorAll('.btn-editar');
     botonesEditar.forEach(btn => {
         btn.addEventListener('click', () => {
