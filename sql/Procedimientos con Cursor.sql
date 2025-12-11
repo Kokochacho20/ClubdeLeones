@@ -66,23 +66,22 @@ END;
 /
 
 
---cursor para reporte_pagos_cuotas_socio --falta implementar
+--cursor para reporte_pagos_cuotas_socio --ya está (revisar) 
 CREATE OR REPLACE PROCEDURE reporte_pagos_cuotas_socio (
-    p_id_socio IN  SOCIOS.id_socio%TYPE,
-    p_fecha_desde IN  DATE,
-    p_fecha_hasta  IN  DATE,
-    p_cursor OUT SYS_REFCURSOR,
+    p_id_socio      IN  SOCIOS.id_socio%TYPE,
+    p_fecha_desde   IN  DATE,
+    p_fecha_hasta   IN  DATE,
+    p_cursor        OUT SYS_REFCURSOR,
     p_total_periodo OUT NUMBER
 )
 AS
 BEGIN
-
     SELECT NVL(SUM(t.monto_colones), 0)
     INTO   p_total_periodo
-    FROM TRANSACCIONES t
-    JOIN ACTIV_SOCIO asoc ON asoc.id_activ_soc = t.id_activ_soc
-    WHERE asoc.id_socio = p_id_socio
-      AND t.fec_transaccion BETWEEN p_fecha_desde AND p_fecha_hasta;
+    FROM   TRANSACCIONES t
+           JOIN ACTIV_SOCIO asoc ON asoc.id_activ_soc = t.id_activ_soc
+    WHERE  asoc.id_socio = p_id_socio
+       AND t.fec_transaccion BETWEEN p_fecha_desde AND p_fecha_hasta;
 
     OPEN p_cursor FOR
         SELECT
@@ -95,17 +94,17 @@ BEGIN
             a.nombre_actividad,
             t.mes_pago,
             t.an_pago
-        FROM TRANSACCIONES t
-        JOIN ACTIV_SOCIO asoc ON asoc.id_activ_soc = t.id_activ_soc
-        JOIN ACTIVIDADES a ON a.id_actividad = asoc.id_actividad
-        JOIN TIPO_PAGO tp ON tp.id_tip_pago = t.id_tip_pago
-        WHERE asoc.id_socio = p_id_socio
-          AND t.fec_transaccion BETWEEN p_fecha_desde AND p_fecha_hasta
+        FROM   TRANSACCIONES t
+               JOIN ACTIV_SOCIO asoc ON asoc.id_activ_soc = t.id_activ_soc
+               JOIN ACTIVIDADES a     ON a.id_actividad   = asoc.id_actividad
+               JOIN TIPO_PAGO tp      ON tp.id_tip_pago   = t.id_tip_pago
+        WHERE  asoc.id_socio = p_id_socio
+           AND t.fec_transaccion BETWEEN p_fecha_desde AND p_fecha_hasta
         ORDER BY t.fec_transaccion;
 END;
 /
 
---cursor para facturacion --falta implementar 
+--cursor para facturacion --ya está (revisar) 
 CREATE OR REPLACE PROCEDURE obtener_recibo_pago (
     p_id_transaccion IN TRANSACCIONES.id_transaccion%TYPE,
     p_cursor         OUT SYS_REFCURSOR
@@ -130,13 +129,13 @@ BEGIN
             tc.tc_compra,
             tc.tc_venta,
             tc.fec_tip_cambio
-        FROM TRANSACCIONES t
-        JOIN ACTIV_SOCIO asoc ON asoc.id_activ_soc = t.id_activ_soc
-        JOIN SOCIOS s ON s.id_socio = asoc.id_socio
-        JOIN ACTIVIDADES a ON a.id_actividad = asoc.id_actividad
-        JOIN TIPO_PAGO tp ON tp.id_tip_pago = t.id_tip_pago
-        JOIN TIPO_CAMBIO tc   ON tc.id_tip_cambio = t.id_tip_cambio
-        WHERE t.id_transaccion = p_id_transaccion;
+        FROM   TRANSACCIONES t
+               JOIN ACTIV_SOCIO asoc ON asoc.id_activ_soc   = t.id_activ_soc
+               JOIN SOCIOS s         ON s.id_socio          = asoc.id_socio
+               JOIN ACTIVIDADES a    ON a.id_actividad      = asoc.id_actividad
+               JOIN TIPO_PAGO tp     ON tp.id_tip_pago      = t.id_tip_pago
+               JOIN TIPO_CAMBIO tc   ON tc.id_tip_cambio    = t.id_tip_cambio
+        WHERE  t.id_transaccion = p_id_transaccion;
 END;
 /
 
