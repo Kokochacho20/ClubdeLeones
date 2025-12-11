@@ -10,7 +10,7 @@ $conn   = getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    // LISTAR Tipos de Actividad
+    // LISTAR tipos Actividad
     $sql = "SELECT id_tip_actividad,
                    nombre_tip_actividad,
                    tipo_actividad
@@ -44,7 +44,7 @@ if ($method === 'POST') {
     $nombre            = $data['nombre_tip_actividad'] ?? null;
     $tipo              = $data['tipo_actividad'] ?? null;
 
-    // INSERTAR TIPO DE ACTIVIDAD
+    // INSERTAR TIPO ACTIVIDAD
     if ($accion === 'crear') {
 
         if (!$nombre || !$tipo) {
@@ -72,7 +72,7 @@ if ($method === 'POST') {
         exit;
     }
 
-    // ACTUALIZAR TIPO DE ACTIVIDAD
+    // ACTUALIZAR TIPO ACTIVIDAD
     if ($accion === 'actualizar') {
 
         if (!$id_tip_actividad) {
@@ -108,7 +108,7 @@ if ($method === 'POST') {
         exit;
     }
 
-    // ELIMINAR TIPO DE ACTIVIDAD
+    // ELIMINAR TIPO ACTIVIDAD
     if ($accion === 'eliminar') {
 
         if (!$id_tip_actividad) {

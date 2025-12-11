@@ -1,6 +1,8 @@
-const API_ACTIVIDADES     = "../api/RegistroDeActividades.php";
-const API_TIPOS_ACTIVIDAD = "../api/tipo_actividad.php";
-const API_SOCIOS          = "../api/socios.php";
+const API_ACTIVIDADES      = "../api/RegistroDeActividades.php";
+const API_TIPOS_ACTIVIDAD  = "../api/tipo_actividad.php";
+const API_SOCIOS           = "../api/socios.php";
+const API_TIPOS_PAGO       = "../api/tipos_pago.php";     
+const API_CUENTAS_BANCARIAS = "../api/cuentas_bancarias.php"; 
 
 async function cargarTiposActividad() {
     const select = document.getElementById("id_tipo_actividad");
@@ -9,7 +11,7 @@ async function cargarTiposActividad() {
     select.innerHTML = '<option value="">Seleccione...</option>';
 
     try {
-        const res = await fetch(API_TIPOS_ACTIVIDAD);
+        const res = await fetch(API_TIPO_ACTIVIDAD);
         const raw = await res.text();
         console.log("tipo_actividad.php RAW:", raw);
 
@@ -73,6 +75,7 @@ async function cargarSocios() {
             console.error("No se pudo parsear JSON de socios:", e);
             return;
         }
+
         if (data && Array.isArray(data.data)) {
             data = data.data;
         }
@@ -83,11 +86,8 @@ async function cargarSocios() {
         }
 
         data.forEach(s => {
-            const id =
-                s.ID_SOCIO || s.id_socio;
-
-            const nombre =
-                s.NOMBRE_SOCIO || s.nombre_socio;
+            const id = s.ID_SOCIO || s.id_socio;
+            const nombre = s.NOMBRE_SOCIO || s.nombre_socio;
 
             if (!id || !nombre) {
                 console.warn("Registro socio sin campos esperados:", s);
@@ -102,6 +102,111 @@ async function cargarSocios() {
 
     } catch (err) {
         console.error("Error cargando socios:", err);
+    }
+}
+
+async function cargarTiposPago() {
+    const select = document.getElementById("id_tip_pago");
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Seleccione...</option>';
+
+    try {
+        const res = await fetch(API_TIPOS_PAGO);
+        const raw = await res.text();
+        console.log("tipos_pago.php RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON de tipos_pago:", e);
+            return;
+        }
+
+        if (data && Array.isArray(data.data)) {
+            data = data.data;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            console.warn("Sin tipos de pago o formato inesperado:", data);
+            return;
+        }
+
+        data.forEach(tp => {
+            const id =
+                tp.ID_TIP_PAGO || tp.id_tip_pago || tp.ID_TIPO_PAGO || tp.id_tipo_pago;
+
+            const nombre =
+                tp.NOMBRE_TIP_PAGO || tp.nombre_tip_pago ||
+                tp.NOMBRE_TIPO_PAGO || tp.nombre_tipo_pago;
+
+            if (!id || !nombre) {
+                console.warn("Registro tipo_pago sin campos esperados:", tp);
+                return;
+            }
+
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = nombre;
+            select.appendChild(opt);
+        });
+
+    } catch (err) {
+        console.error("Error cargando tipos de pago:", err);
+    }
+}
+
+async function cargarCuentasBancarias() {
+    const select = document.getElementById("id_cuenta_bco");
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Seleccione...</option>';
+
+    try {
+        const res = await fetch(API_CUENTAS_BANCARIAS);
+        const raw = await res.text();
+        console.log("cuentas_bancarias.php RAW:", raw);
+
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (e) {
+            console.error("No se pudo parsear JSON de cuentas bancarias:", e);
+            return;
+        }
+
+        if (data && Array.isArray(data.data)) {
+            data = data.data;
+        }
+
+        if (!Array.isArray(data) || data.length === 0) {
+            console.warn("Sin cuentas bancarias o formato inesperado:", data);
+            return;
+        }
+
+        data.forEach(c => {
+            const id =
+                c.ID_CUENTA_BCO || c.id_cuenta_bco ||
+                c.ID_CUENTA_BANCARIA || c.id_cuenta_bancaria;
+
+            const nombre =
+                c.NOMBRE_CUENTA || c.nombre_cuenta ||
+                c.NOMBRE_CTA_BCO || c.nombre_cta_bco;
+
+            if (!id || !nombre) {
+                console.warn("Registro cuenta bancaria sin campos esperados:", c);
+                return;
+            }
+
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = nombre;
+            select.appendChild(opt);
+        });
+
+    } catch (err) {
+        console.error("Error cargando cuentas bancarias:", err);
     }
 }
 
@@ -138,12 +243,12 @@ async function cargarActividades() {
         }
 
         data.forEach(a => {
-            const id      = a.ID_ACTIVIDAD      || a.id_actividad;
-            const nombre  = a.NOMBRE_ACTIVIDAD  || a.nombre_actividad;
-            const tipo    = a.ID_TIPO_ACTIVIDAD || a.id_tipo_actividad;
-            const fecha   = a.FEC_ACTIVIDAD     || a.fec_actividad;
-            const socio   = a.ID_SOCIO_RESP     || a.id_socio_resp;
-            const objetivo= a.OBJETIVO_ACTIVIDAD || a.OBJETIVO || a.objetivo_actividad;
+            const id       = a.ID_ACTIVIDAD      || a.id_actividad;
+            const nombre   = a.NOMBRE_ACTIVIDAD  || a.nombre_actividad;
+            const tipo     = a.ID_TIPO_ACTIVIDAD || a.id_tipo_actividad;
+            const fecha    = a.FEC_ACTIVIDAD     || a.fec_actividad;
+            const socio    = a.ID_SOCIO_RESP     || a.id_socio_resp;
+            const objetivo = a.OBJETIVO_ACTIVIDAD || a.OBJETIVO || a.objetivo_actividad;
 
             tabla.innerHTML += `
                 <tr>
@@ -298,7 +403,9 @@ function obtenerDatosFormulario() {
         id_tipo_actividad:  document.getElementById("id_tipo_actividad").value,
         fec_actividad:      document.getElementById("fec_actividad").value,
         id_socio_resp:      document.getElementById("id_socio_responsable").value,
-        objetivo_actividad: document.getElementById("objetivo_actividad").value.trim()
+        objetivo_actividad: document.getElementById("objetivo_actividad").value.trim(),
+        id_tip_pago:        document.getElementById("id_tip_pago") ? document.getElementById("id_tip_pago").value : "",
+        id_cuenta_bco:      document.getElementById("id_cuenta_bco") ? document.getElementById("id_cuenta_bco").value : ""
     };
 }
 
@@ -312,5 +419,7 @@ function limpiarFormulario() {
 document.addEventListener("DOMContentLoaded", () => {
     cargarTiposActividad();
     cargarSocios();
+    cargarTiposPago();
+    cargarCuentasBancarias();
     cargarActividades();
 });
