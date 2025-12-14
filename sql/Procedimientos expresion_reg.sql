@@ -1,8 +1,4 @@
-
---hace falta uno 
-
-
---Insrtar provincia revisando que solamente tenga letras y espacios en el nombre
+--Insertar provincia revisando que solamente tenga letras y espacios en el nombre
 CREATE OR REPLACE PROCEDURE insertar_provincia_regex (
     p_nombre_provincia IN PROVINCIAS.nombre_provincia%TYPE
 )

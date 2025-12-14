@@ -1,7 +1,3 @@
---Al menos seis de las tablas deben incluir disparadores (triggers). Específicamente dos para cada acción.
---Los trigger se harán en las siguientes tablas: SOCIOS, ACTIVIDADES, ACTIV_SOCIO, 
---TRANSACCIONES, CUENTAS_BANCARIAS y BANCOS
-
 --1.Tabla SOCIOS
 -- Trigger BEFORE INSERT: valida teléfono
 CREATE OR REPLACE TRIGGER trg_socios_bi
