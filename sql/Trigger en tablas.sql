@@ -134,3 +134,15 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Banco eliminado: ' || :OLD.nombre_banco);
 END;
 /
+
+-- Fecha de nacimiento no puede ser mayor a la fecha actual
+CREATE OR REPLACE TRIGGER TRG_SOCIOS_FECHA_NAC_NO_FUTURA
+BEFORE INSERT OR UPDATE OF FECHA_NACIMIENTO ON SOCIOS
+FOR EACH ROW
+BEGIN
+    IF :NEW.FECHA_NACIMIENTO IS NOT NULL
+       AND TRUNC(:NEW.FECHA_NACIMIENTO) > TRUNC(SYSDATE) THEN
+        RAISE_APPLICATION_ERROR(-20001, 'La fecha de nacimiento no puede ser mayor a hoy.');
+    END IF;
+END;
+/

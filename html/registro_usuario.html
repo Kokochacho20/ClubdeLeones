@@ -17,8 +17,7 @@
       <div class="modal-content p-4 border-0 shadow-lg rounded-4">
         <div class="modal-header border-0 flex-column align-items-center">
           <img src="../img/logotibas.png" alt="Logo Club de Leones de Tibás" class="mb-3"
-            style="width:80px;height:80px;border-radius:12px;object-fit:contain"
-            onerror="this.style.display='none'">
+            style="width:80px;height:80px;border-radius:12px;object-fit:contain" onerror="this.style.display='none'">
           <h5 class="modal-title fw-bold text-accent">Crear nuevo usuario</h5>
           <p class="text-muted mb-0">Registro para acceso al sistema interno</p>
         </div>
@@ -27,27 +26,27 @@
           <form id="formRegistro" novalidate>
             <div class="mb-3">
               <label for="regNombre" class="form-label">Nombre completo</label>
-              <input type="text" class="form-control" id="regNombre" required>
+              <input type="text" class="form-control" id="regNombre" required maxlength="100">
             </div>
 
             <div class="mb-3">
               <label for="regCorreo" class="form-label">Correo electrónico</label>
-              <input type="email" class="form-control" id="regCorreo" required>
+              <input type="email" class="form-control" id="regCorreo" required maxlength="150">
             </div>
 
             <div class="mb-3">
               <label for="regTelefono" class="form-label">Teléfono</label>
-              <input type="text" class="form-control" id="regTelefono">
+              <input type="text" class="form-control" id="regTelefono" maxlength="20" inputmode="numeric">
             </div>
 
             <div class="mb-3">
               <label for="regClave" class="form-label">Contraseña</label>
-              <input type="password" class="form-control" id="regClave" required>
+              <input type="password" class="form-control" id="regClave" required minlength="8" maxlength="72">
             </div>
 
             <div class="mb-3">
               <label for="regClave2" class="form-label">Confirmar contraseña</label>
-              <input type="password" class="form-control" id="regClave2" required>
+              <input type="password" class="form-control" id="regClave2" required minlength="8" maxlength="72">
             </div>
 
             <div class="d-grid gap-2">

@@ -4,6 +4,10 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+ini_set('display_errors', 0);
+error_reporting(0);
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -25,6 +29,47 @@ $rol      = isset($input['rol'])      ? trim($input['rol'])      : 'SOCIO';
 
 if ($nombre === '' || $correo === '' || $clave === '') {
     echo json_encode(['ok' => false, 'mensaje' => 'Nombre, correo y clave son obligatorios']);
+    exit;
+}
+
+$lenNombre   = mb_strlen($nombre, 'UTF-8');
+$lenCorreo   = mb_strlen($correo, 'UTF-8');
+$lenTelefono = mb_strlen($telefono, 'UTF-8');
+$lenClave    = mb_strlen($clave, 'UTF-8');
+$lenRol      = mb_strlen($rol, 'UTF-8');
+
+if ($lenNombre > 100) {
+    echo json_encode(['ok' => false, 'mensaje' => 'El nombre no puede superar los 100 caracteres']);
+    exit;
+}
+
+if ($lenCorreo > 150) {
+    echo json_encode(['ok' => false, 'mensaje' => 'El correo no puede superar los 150 caracteres']);
+    exit;
+}
+
+if ($telefono !== '' && $lenTelefono > 20) {
+    echo json_encode(['ok' => false, 'mensaje' => 'El teléfono no puede superar los 20 caracteres']);
+    exit;
+}
+
+if ($lenClave < 8) {
+    echo json_encode(['ok' => false, 'mensaje' => 'La contraseña debe tener al menos 8 caracteres']);
+    exit;
+}
+
+if ($lenClave > 72) {
+    echo json_encode(['ok' => false, 'mensaje' => 'La contraseña es demasiado larga']);
+    exit;
+}
+
+if ($lenRol > 20) {
+    echo json_encode(['ok' => false, 'mensaje' => 'Rol inválido']);
+    exit;
+}
+
+if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(['ok' => false, 'mensaje' => 'Correo inválido']);
     exit;
 }
 
